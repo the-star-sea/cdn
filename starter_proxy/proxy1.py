@@ -61,7 +61,7 @@ def Vod(resource):
             headers=request.headers, data=request.data)
         tf = time.time()
         length = int(serverResponse.headers.get('Content-Length'))
-        tN = 1024*length / (tf - ts)
+        tN = 8*length / (tf - ts)
         tMap[port] = a * tN + (1 - a) * tC
         return Response(serverResponse)
 
