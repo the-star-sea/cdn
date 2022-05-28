@@ -1,4 +1,4 @@
-from socket import socket, AF_INET, SOCK_STREAM
+import socket
 from urllib import request
 from flask import Flask, Response,request
 import requests
@@ -11,7 +11,10 @@ def init():
         return Response(msg)
 @app.route('/index.html')
 def init1():
-        msg=requests.get('http://localhost:'+str(request_dns()),headers=request.headers,data=request.data)
+        msg=requests.get('http://localhost:'+str(request_dns()) + "/index.html" ,headers=request.headers,data=request.data)
+        print("=============================================================")
+        print('http://localhost:'+str(request_dns()))
+        print("=============================================================")
         return Response(msg)
 
 @app.route('/swfobject.js')
@@ -40,14 +43,13 @@ def request_dns(message='port'):
     serverName = '127.0.0.1'
     serverPort = 8888
     socketAddress = (serverName, serverPort)
-    ss = socket(AF_INET, SOCK_STREAM)
-    ss.connect(socketAddress)
-    ss.send(message.encode('utf-8'))
-    msg = ss.recvfrom(1024)
+    ss = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    ss.sendto(message.encode('utf-8'), socketAddress)
+    msg, _ = ss.recvfrom(1024)
     if not msg:
         print("None recevied\n")
-    print(bytes.decode(msg[0]),flush=True)
-    return bytes.decode(msg[0])
+    # print(bytes.decode(msg[0]),flush=True)
+    return msg.decode('utf-8').strip()
 
 def calculate_throughput():
     """
