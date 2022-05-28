@@ -35,7 +35,7 @@ def check_init(port):
     for item in brate_list:
         bitRates.append(int(re.search('\d+', item).group()))
     bMap[port] = sorted(bitRates)
-    tMap[port] = bMap[port][2] * 1.5 + 0.0001
+    tMap[port] = bMap[port][0] * 1.5 + 0.0001
     return msg
 
 @app.route('/vod/<resource>')
@@ -55,20 +55,13 @@ def Vod(resource):
         for item in bMap[port]:
             if 1.5 * item <= tC:
                 bitrate = item
-        print("zttttttttttttttttttttttttttttttttttttt")
-        print(tC)
-        print(bitrate)
-        print(bMap)
-        print(all)
-        print('http://localhost:' + str(port) + '/vod/' + f'{bitrate}Seg{seqNum}-Frag{fragNum}')
-        print("zttttttttttttttttttttttttttttttttttt")
         ts = time.time()
         serverResponse = requests.get(
             'http://localhost:' + str(port) + '/vod/' + f'{bitrate}Seg{seqNum}-Frag{fragNum}',
             headers=request.headers, data=request.data)
         tf = time.time()
         length = int(serverResponse.headers.get('Content-Length'))
-        tN = 8*length / (tf - ts)
+        tN = 1024*length / (tf - ts)
         tMap[port] = a * tN + (1 - a) * tC
         return Response(serverResponse)
 
