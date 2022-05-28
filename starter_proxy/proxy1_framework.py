@@ -10,7 +10,7 @@ def init():
         msg=requests.get('http://localhost:'+str(request_dns()),headers=request.headers,data=request.data)
         return Response(msg)
 @app.route('/index.html')
-def init():
+def init1():
         msg=requests.get('http://localhost:'+str(request_dns()),headers=request.headers,data=request.data)
         return Response(msg)
 
