@@ -60,7 +60,7 @@ def Vod(resource):
         print(bitrate)
         print(bMap)
         print(all)
-        print('http://localhost:' + str(port) + '/vod/' + f'/vod/{bitrate}Seg{seqNum}-Frag{fragNum}')
+        print('http://localhost:' + str(port) + '/vod/' + f'{bitrate}Seg{seqNum}-Frag{fragNum}')
         print("zttttttttttttttttttttttttttttttttttt")
         ts = time.time()
         serverResponse = requests.get(
