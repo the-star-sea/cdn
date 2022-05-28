@@ -1,54 +1,56 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <title>Strobe Media Playback</title>
-    <script type="text/javascript" src="swfobject.js"></script>
-	<script type="text/javascript">  		
-        var loc = window.location.host
 
-    	// Create a StrobeMediaPlayback configuration
+<!-- var screenWidth = 800;
+var screenHeight = 400; -->
+
+<head>
+	<title>Strobe Media Playback</title>
+	<script type="text/javascript" src="swfobject.js"></script>
+	<script type="text/javascript">
+		var loc = window.location.host
+
+		// Create a StrobeMediaPlayback configuration
 		var parameters =
-			{	src: "http://"+loc+"/vod/big_buck_bunny.f4m"
-   			,	autoPlay: true
-			,	controlBarAutoHide: false
-			,   javascriptCallbackFunction: "onJavaScriptBridgeCreated"
-			};
-    		
+		{
+			src: "http://" + loc + "/vod/big_buck_bunny.f4m"
+			, autoPlay: true
+			, controlBarAutoHide: false
+			, javascriptCallbackFunction: "onJavaScriptBridgeCreated"
+		};
+
 		// Embed the player SWF:
 		swfobject.embedSWF
-			( "StrobeMediaPlayback.swf"
-			, "strobeMediaPlayback"
-			, 1280
-			, 720
-			, "10.1.0"
-			, {}
-			, parameters
-			, { allowFullScreen: "true"}
-			, { name: "strobeMediaPlayback" }
+			("StrobeMediaPlayback.swf"
+				, "strobeMediaPlayback"
+				, 800
+				, 400
+				, "10.1.0"
+				, {}
+				, parameters
+				, { allowFullScreen: "true" }
+				, { name: "strobeMediaPlayback" }
 			);
 
-			
-		function onCurrentTimeChange(time, playerId)
-		{
+
+		function onCurrentTimeChange(time, playerId) {
 			document.getElementById("currentTime").innerHTML = time;
 		}
-		
-		function onDurationChange(time, playerId)
-		{
+
+		function onDurationChange(time, playerId) {
 			document.getElementById("duration").innerHTML = time;
 		}
 		var player = null;
-		function onJavaScriptBridgeCreated(playerId)
-		{
+		function onJavaScriptBridgeCreated(playerId) {
 			if (player == null) {
 				player = document.getElementById(playerId);
-				
+
 				// Add event listeners that will update the
 				player.addEventListener("currentTimeChange", "onCurrentTimeChange");
 				player.addEventListener("durationChange", "onDurationChange");
-				
+
 				// Pause/Resume the playback when we click the Play/Pause link
-				document.getElementById("play-pause").onclick = function(){
+				document.getElementById("play-pause").onclick = function () {
 					var state = player.getState();
 					if (state == "ready" || state == "paused") {
 						player.play2();
@@ -61,11 +63,162 @@
 				};
 			}
 		}
-    </script>  	
-  </head>
-  <body>
-	<div id="strobeMediaPlayback">
-      <p>Alternative content</p>
-    </div>
-  </body>
+	</script>
+</head>
+
+<body background="https://img1.baidu.com/it/u=722430420,1974228945&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500" style="background-repeat:no-repeat;
+               background-attachment:fixed;
+               background-size:100% 100%; ">
+	<div style="position: relative; top: 20px;">
+		<div class="screen_container" id="contents">
+			<div id="strobeMediaPlayback" style="height: 100%; width: 100%">
+				<p>Alternative content</p>
+			</div>
+		</div>
+
+		<div class="chat_box">
+			<textarea id="chat_box" readonly style="width: 100%; height: 100%"></textarea>
+		</div>
+	</div>
+
+	<div style="position: relative;top: 20px;">
+		<div class="input_box">
+			<textarea id="input_box" readonly style="width: 100%; height: 100%"></textarea>
+		</div>
+		<div class="picture">
+			<img src="https://img0.baidu.com/it/u=2521851051,2189866243&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500"
+				style="			width: auto;
+			max-width: 310px;
+			height: auto;
+			max-height: 130px; ">
+		</div>
+	</div>
+
+	<style>
+		.screen_container {
+			position: relative;
+			width: 800px;
+			height: 400px;
+			background: #000;
+			float: left;
+		}
+
+		.chat_box {
+			left: 20px;
+			position: relative;
+			width: 300px;
+			height: 400px;
+			float: left;
+		}
+
+		.input_box {
+			top: 20px;
+			position: relative;
+			width: 800px;
+			height: 120px;
+			float: left;
+		}
+
+		.picture {
+			left: 20px;
+			top: 20px;
+			position: relative;
+			float: left;
+			width: 310px;
+			height: 130px;
+
+		}
+	</style>
+
+
+	<script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+	<script>
+		const timers = [];
+		const jqueryDom = createDanmaku('hihihi'); // test danmaku, delete it as you like
+		addInterval(jqueryDom);// test danmaku, delete it as you like
+
+		const danList = [];     // story the text of danmaku
+		const timeList = [];    // story the timestamp of danmaku (although the timestamp is not used )
+		let index = 0;          // index represents the number of danmakus that this client has received
+		// getNewDan(index );
+		setInterval("getNewDan(index);", 800); // Send a query to the server every 800ms to get new danmaku
+
+
+		$(".send").on("click", function () {
+			// TODO: send danmaku to server
+			const danmakuItem = document.getElementById('danmakutext').value;   // get the item from the input field
+			const httpRequest = new XMLHttpRequest();       // construct a http post request
+			httpRequest.withCredentials = false;
+			httpRequest.open("post", "http://127.0.0.1:8765");
+			httpRequest.setRequestHeader("Content-Type", "text/plain");     // set the Content-Type to meet the cross-domain requirements
+			const time = new Date().getTime();      // get time stamp
+			httpRequest.send(danmakuItem + " " + time);     // send danmakus with timestamp
+		});
+
+		// function getNewDan(index) {
+		// 	const httpRequest = new XMLHttpRequest();       // construct a http get request with index
+		// 	httpRequest.withCredentials = false;
+		// 	httpRequest.open("get", "http://127.0.0.1:8765?index=" + index, true);
+		// 	httpRequest.setRequestHeader("Content-Type", "text/plain");     // set the Content-Type to meet the cross-domain requirements
+		// 	httpRequest.send();
+		// 	let res = "";
+		// 	httpRequest.onreadystatechange = function () {
+		// 		if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+		// 			res = httpRequest.responseText;
+		// 			receive(res);       // get response message
+		// 		}
+		// 	}
+		// }
+
+		function receive(res) {
+			if (res.length === 0) {
+				return;
+			}
+			console.log("res: " + res);     // parse response message
+			const list = res.trim().split(" ");
+			for (let i = 0; i < list.length; i++) {
+				danList.push(list[i].split("-")[0]);        // put the danmaku and timestamp into the list
+				timeList.push(list[i].split("-")[1]);
+				addInterval(createDanmaku(list[i].split("-")[0]));      // display the danmaku
+				index = index + 1;          // update index, which means the client receives a new danmakus
+			}
+			// console.log("index: " + index);
+		}
+
+
+		// create a Dom object corresponding to a danmaku
+		function createDanmaku(text) {
+			const jqueryDom = $("<div class='bullet'>" + text + "</div>");
+			const fontColor = "rgb(255,255,255)";
+			const fontSize = "20px";
+			let top = Math.floor(Math.random() * 400) + "px";
+			const left = $(".screen_container").width() + "px";
+			jqueryDom.css({
+				"position": 'absolute',
+				"color": fontColor,
+				"font-size": fontSize,
+				"left": left,
+				"top": top,
+			});
+			$(".screen_container").append(jqueryDom);
+			return jqueryDom;
+		}
+
+		// add timer task to let the danmaku fly from right to left
+		function addInterval(jqueryDom) {
+			let left = jqueryDom.offset().left - $(".screen_container").offset().left;
+			const timer = setInterval(function () {
+				left--;
+				jqueryDom.css("left", left + "px");
+				if (jqueryDom.offset().left + jqueryDom.width() < $(".screen_container").offset().left) {
+					jqueryDom.remove();
+					clearInterval(timer);
+				}
+			}, 5); // set delay as 5ms,which means the danmaku changes its position every 5ms
+			timers.push(timer);
+		}
+	</script>
+</body>
+
+
 </html>
