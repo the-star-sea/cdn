@@ -34,7 +34,7 @@ def Vod(resource):
         port=request_dns()
         msg=requests.get('http://localhost:'+str(port)+"/vod/big_buck_bunny.f4m")
         res=Response(msg)
-        brate_list = re.compile('bitrate="\d+"').findall(res.text)
+        brate_list = re.compile('bitrate="\d+"').findall(msg.text)
         bitRates=[]
         for item in brate_list:
             bitRates.append(int(re.search('\d+', item).group()))
