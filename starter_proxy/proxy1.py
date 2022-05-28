@@ -1,20 +1,23 @@
+import re
 import socket
+import time
 from urllib import request
 from flask import Flask, Response,request
 import requests
-bitRatesMap={}
+tMap={}
+bMap={}
 app = Flask(__name__)
-
+a=0.5
 @app.route('/')
 def init():
-        msg=requests.get('http://localhost:'+str(request_dns()),headers=request.headers,data=request.data)
+        msg=requests.get('http://localhost:'+str(request_dns()+ "/index.html"),headers=request.headers,data=request.data)
         return Response(msg)
 @app.route('/index.html')
 def init1():
         msg=requests.get('http://localhost:'+str(request_dns()) + "/index.html" ,headers=request.headers,data=request.data)
-        print("=============================================================")
-        print('http://localhost:'+str(request_dns()))
-        print("=============================================================")
+        # print("=============================================================")
+        # print('http://localhost:'+str(request_dns()))
+        # print("=============================================================")
         return Response(msg)
 
 @app.route('/swfobject.js')
@@ -25,16 +28,34 @@ def swf():
 def smp():
         msg=requests.get('http://localhost:'+str(request_dns())+"/StrobeMediaPlayback.swf",headers=request.headers,data=request.data)
         return Response(msg)
-@app.route("/vod/<resource>")
+@app.route('/vod/<resource>')
 def Vod(resource):
     if resource == 'big_buck_bunny.f4m':
         port=request_dns()
         msg=requests.get('http://localhost:'+str(port)+"/vod/big_buck_bunny.f4m")
-        return Response(msg)
+        res=Response(msg)
+        brate_list = re.compile('bitrate="\d+"').findall(res.text)
+        bitRates=[]
+        for item in brate_list:
+            bitRates.append(int(re.search('\d+', item).group()))
+        bMap[port] = sorted(bitRates)
+        tMap[port]=bMap[port][0]
+        return res
     else:
         port=request_dns()
-        print(resource)
-        serverResponse=requests.get('http://localhost:'+str(port)+'/vod/1000'+resource,headers=request.headers,data=request.data)
+        all = re.findall(r'\d+', resource)
+        seqNum = all[1]
+        fragNum = all[2]
+        tC=tMap[port]
+        for item in bMap[port]:
+            if 1.5*item<=tC:
+                bitrate=item
+        tf=time.time()
+        serverResponse=requests.get('http://localhost:'+str(port)+'/vod/'+f'/vod/{bitrate}Seg{seqNum}-Frag{fragNum}',headers=request.headers,data=request.data)
+        ts=time.time()
+        length = int(serverResponse.headers.get('Content-Length'))
+        tN = length / (tf - ts)
+        tMap[port]= a * tN + (1 - a) * tC
         return Response(serverResponse)
 
 
