@@ -197,6 +197,7 @@ for i in range(0,3):
         ymin[i] = y[0]
     x = ax.get_xlim()
     ax.axis([x[0],x[1],ymin[i],ymax[i]])
+    print("x[0]: %d x[1]: %d ymin[i] %d ymax[i]: %d" % (x[0], x[1], ymin[i], ymax[i]))
     plt.subplots_adjust(top=0.95) 
     plt.subplots_adjust(bottom=0.15) 
     #plt.show()

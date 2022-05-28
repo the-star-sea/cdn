@@ -1,3 +1,4 @@
+import argparse
 import re
 import socket
 import time
@@ -8,7 +9,6 @@ tMap={}
 bMap={}
 app = Flask(__name__)
 a=0.5
-logFile=open('log',"w")
 @app.route('/')
 def init():
         msg=requests.get('http://localhost:'+str(request_dns()+ "/index.html"),headers=request.headers,data=request.data)
@@ -62,9 +62,9 @@ def Vod(resource):
             headers=request.headers, data=request.data)
         tf = time.time()
         length = int(res.headers.get('Content-Length'))
-        tN = 8*length / (tf - ts)
+        tN = (8*length / 1024) / (tf - ts) 
         tMap[port] = a * tN + (1 - a) * tC
-        logFile.write(f'{ts} {tf - ts} {tN} {tC} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
+        logFile.write(f'{ts} {tf - ts} {tN} {tMap[port]} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
         logFile.flush()
         return Response(res)
 
@@ -81,7 +81,6 @@ def request_dns(message='port'):
     msg, _ = ss.recvfrom(1024)
     if not msg:
         print("None recevied\n")
-    # print(bytes.decode(msg[0]),flush=True)
     return msg.decode('utf-8').strip()
 
 def calculate_throughput():
@@ -89,6 +88,13 @@ def calculate_throughput():
     Calculate throughput here.
     """
 
+def init_log_file():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--filename", type=str, required=True)
+    args = parser.parse_args()
+    global logFile 
+    logFile= open('logs/'+args.filename,"w")
 
 if __name__ == '__main__':
+    init_log_file()
     app.run(port=8999)
