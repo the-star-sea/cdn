@@ -30,33 +30,36 @@ def smp():
         return Response(msg)
 @app.route('/vod/<resource>')
 def Vod(resource):
-    if resource == 'big_buck_bunny.f4m':
-        port=request_dns()
-        msg=requests.get('http://localhost:'+str(port)+"/vod/big_buck_bunny.f4m")
-        res=Response(msg)
+    port = request_dns()
+    if port not in tMap.keys():
+        msg = requests.get('http://localhost:' + str(port) + "/vod/big_buck_bunny.f4m")
         brate_list = re.compile('bitrate="\d+"').findall(msg.text)
-        bitRates=[]
+        bitRates = []
         for item in brate_list:
             bitRates.append(int(re.search('\d+', item).group()))
         bMap[port] = sorted(bitRates)
-        tMap[port]=bMap[port][0]
-        return res
+        tMap[port] = bMap[port][0]
+    if resource == 'big_buck_bunny.f4m':
+        return Response(msg)
     else:
-        port=request_dns()
         all = re.findall(r'\d+', resource)
         seqNum = all[1]
         fragNum = all[2]
-        tC=tMap[port]
+        tC = tMap[port]
         for item in bMap[port]:
-            if 1.5*item<=tC:
-                bitrate=item
-        ts=time.time()
-        serverResponse=requests.get('http://localhost:'+str(port)+'/vod/'+f'/vod/{bitrate}Seg{seqNum}-Frag{fragNum}',headers=request.headers,data=request.data)
-        tf=time.time()
+            if 1.5 * item <= tC:
+                bitrate = item
+        ts = time.time()
+        serverResponse = requests.get(
+            'http://localhost:' + str(port) + '/vod/' + f'/vod/{bitrate}Seg{seqNum}-Frag{fragNum}',
+            headers=request.headers, data=request.data)
+        tf = time.time()
         length = int(serverResponse.headers.get('Content-Length'))
         tN = length / (tf - ts)
-        tMap[port]= a * tN + (1 - a) * tC
+        tMap[port] = a * tN + (1 - a) * tC
         return Response(serverResponse)
+
+
 
 
 def request_dns(message='port'):
