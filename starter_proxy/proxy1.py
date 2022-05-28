@@ -28,34 +28,39 @@ def swf():
 def smp():
         msg=requests.get('http://localhost:'+str(request_dns())+"/StrobeMediaPlayback.swf",headers=request.headers,data=request.data)
         return Response(msg)
+def check_init(port):
+    msg = requests.get('http://localhost:' + str(port) + "/vod/big_buck_bunny.f4m")
+    brate_list = re.compile('bitrate="\d+"').findall(msg.text)
+    bitRates = []
+    for item in brate_list:
+        bitRates.append(int(re.search('\d+', item).group()))
+    bMap[port] = sorted(bitRates)
+    tMap[port] = bMap[port][0] * 1.5 + 0.0001
+
+    return msg
 @app.route('/vod/<resource>')
 def Vod(resource):
     port = request_dns()
-    if port not in tMap.keys():
-        msg = requests.get('http://localhost:' + str(port) + "/vod/big_buck_bunny.f4m")
-        brate_list = re.compile('bitrate="\d+"').findall(msg.text)
-        bitRates = []
-        for item in brate_list:
-            bitRates.append(int(re.search('\d+', item).group()))
-        bMap[port] = sorted(bitRates)
-        tMap[port] = bMap[port][0]*1.5+0.0001
     if resource == 'big_buck_bunny.f4m':
+        msg=check_init(port)
         return Response(msg)
     else:
         all = re.findall(r'\d+', resource)
         seqNum = all[1]
         fragNum = all[2]
+        if port not in tMap.keys():
+            check_init(port)
         tC = tMap[port]
         bitrate=-1000
         for item in bMap[port]:
             if 1.5 * item <= tC:
                 bitrate = item
-        ts = time.time()
         print("zttttttttttttttttttttttttttttttttttttt")
         print(tC)
         print(bitrate)
         print(bMap)
         print("zttttttttttttttttttttttttttttttttttt")
+        ts = time.time()
         serverResponse = requests.get(
             'http://localhost:' + str(port) + '/vod/' + f'/vod/{bitrate}Seg{seqNum}-Frag{fragNum}',
             headers=request.headers, data=request.data)
