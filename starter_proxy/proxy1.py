@@ -38,7 +38,7 @@ def Vod(resource):
         for item in brate_list:
             bitRates.append(int(re.search('\d+', item).group()))
         bMap[port] = sorted(bitRates)
-        tMap[port] = bMap[port][0]
+        tMap[port] = bMap[port][0]*1.5+0.0001
     if resource == 'big_buck_bunny.f4m':
         return Response(msg)
     else:
