@@ -35,7 +35,7 @@ def check_init(port):
     for item in brate_list:
         bitRates.append(int(re.search('\d+', item).group()))
     bMap[port] = sorted(bitRates)
-    tMap[port] = bMap[port][0] * 1.5 + 0.0001
+    tMap[port] = bMap[port][2] * 1.5 + 0.0001
     return msg
 
 @app.route('/vod/<resource>')
