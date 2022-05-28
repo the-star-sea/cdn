@@ -46,16 +46,23 @@ def Vod(resource):
         seqNum = all[1]
         fragNum = all[2]
         tC = tMap[port]
+        bitrate=-1000
         for item in bMap[port]:
             if 1.5 * item <= tC:
                 bitrate = item
         ts = time.time()
+        print("zttttttttttttttttttttttttttttttttttttt")
+        print(tC)
+        print(bitrate)
+        print(bMap)
+        print("zttttttttttttttttttttttttttttttttttt")
         serverResponse = requests.get(
             'http://localhost:' + str(port) + '/vod/' + f'/vod/{bitrate}Seg{seqNum}-Frag{fragNum}',
             headers=request.headers, data=request.data)
         tf = time.time()
         length = int(serverResponse.headers.get('Content-Length'))
-        tN = length / (tf - ts)
+        tN = 8*length / (tf - ts)
+
         tMap[port] = a * tN + (1 - a) * tC
         return Response(serverResponse)
 
