@@ -64,7 +64,7 @@ def Vod(resource):
         print("zttttttttttttttttttttttttttttttttttt")
         ts = time.time()
         serverResponse = requests.get(
-            'http://localhost:' + str(port) + '/vod/' + f'/vod/{bitrate}Seg{seqNum}-Frag{fragNum}',
+            'http://localhost:' + str(port) + '/vod/' + f'{bitrate}Seg{seqNum}-Frag{fragNum}',
             headers=request.headers, data=request.data)
         tf = time.time()
         length = int(serverResponse.headers.get('Content-Length'))
