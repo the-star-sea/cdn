@@ -16,13 +16,13 @@ def fairness(x,y):
     return ((x+y)*(x+y)) / (2*((x*x)+(y*y)))
 
 if len(sys.argv) < 4:
-    print USAGE
+    print(USAGE)
     exit(-1)
 
 nsl = open(sys.argv[1]).read().split('\n')[:-1]
 
 lfs = []
-for i in xrange(2,len(sys.argv)):
+for i in range(2,len(sys.argv)):
     lfs.append(open(sys.argv[i]).read().split('\n')[:-1])
 
 
@@ -68,9 +68,9 @@ for (t,l) in BR_list:
         end[n] = t            
 
 BR_y = []
-for i in xrange(max(end.values())+1):
+for i in range(max(end.values())+1):
     b = []
-    for k in xrange(len(start)):
+    for k in range(len(start)):
         if i < start[k] or i > end[k]: # hasn't started yet or ended already
             b.append(0)
         else:
@@ -87,9 +87,9 @@ for i in xrange(max(end.values())+1):
     BR_y.append(b)
 
 TPUT_y = []
-for i in xrange(max(end.values())+1):
+for i in range(max(end.values())+1):
     c = []
-    for k in xrange(len(start)):
+    for k in range(len(start)):
         if i < start[k] or i > end[k]: # hasn't started yet or ended already
             c.append(0)
         else:
@@ -114,7 +114,7 @@ for i, (x,y) in enumerate(BR_y):
         fair.append(fairness(x,y))
 
 smooth = []
-for i in xrange(len(BR_y)):
+for i in range(len(BR_y)):
     if i+1 < len(BR_y):
         s1 = BR_y[i+1][0] - BR_y[i][0]
         s2 = BR_y[i+1][1] - BR_y[i][1]
