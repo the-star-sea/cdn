@@ -8,6 +8,7 @@ tMap={}
 bMap={}
 app = Flask(__name__)
 a=0.5
+logFile=open('log',"w")
 @app.route('/')
 def init():
         msg=requests.get('http://localhost:'+str(request_dns()+ "/index.html"),headers=request.headers,data=request.data)
@@ -63,6 +64,8 @@ def Vod(resource):
         length = int(res.headers.get('Content-Length'))
         tN = 8*length / (tf - ts)
         tMap[port] = a * tN + (1 - a) * tC
+        logFile.write(f'{ts} {tf - ts} {tN} {tC} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
+        logFile.flush()
         return Response(res)
 
 
