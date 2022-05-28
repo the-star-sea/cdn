@@ -5,7 +5,10 @@ import requests
 bitRatesMap={}
 app = Flask(__name__)
 
-
+@app.route('/')
+def init():
+        msg=requests.get('http://localhost:'+str(request_dns()),headers=request.headers,data=request.data)
+        return Response(msg)
 @app.route('/index.html')
 def init():
         msg=requests.get('http://localhost:'+str(request_dns()),headers=request.headers,data=request.data)
@@ -16,7 +19,7 @@ def swf():
         msg=requests.get('http://localhost:'+str(request_dns()+"/swfobject.js"),headers=request.headers,data=request.data)
         return Response(msg)
 @app.route('/StrobeMediaPlayback.swf')
-def swf():
+def smp():
         msg=requests.get('http://localhost:'+str(request_dns())+"/StrobeMediaPlayback.swf",headers=request.headers,data=request.data)
         return Response(msg)
 @app.route("/vod/<resource>")
@@ -32,7 +35,7 @@ def Vod(resource):
         return Response(serverResponse)
 
 
-def request_dns(message):
+def request_dns(message='port'):
     # return 8080
     serverName = '127.0.0.1'
     serverPort = 8888
