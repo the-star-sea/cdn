@@ -1,14 +1,35 @@
+from socket import socket, AF_INET, SOCK_STREAM
 from urllib import request
-from flask import Flask, Response,Request
-
+from flask import Flask, Response,request
+import requests
+bitRatesMap={}
 app = Flask(__name__)
 
 
-@app.route('/example')
-def simple():
-        return Response(request.get('http://www.example.com'))
+@app.route('/index.html')
+def init():
+        msg=requests.get('http://localhost:'+str(request_dns()),headers=request.headers,data=request.data)
+        return Response(msg)
 
-
+@app.route('/swfobject.js')
+def swf():
+        msg=requests.get('http://localhost:'+str(request_dns()+"/swfobject.js"),headers=request.headers,data=request.data)
+        return Response(msg)
+@app.route('/StrobeMediaPlayback.swf')
+def swf():
+        msg=requests.get('http://localhost:'+str(request_dns())+"/StrobeMediaPlayback.swf",headers=request.headers,data=request.data)
+        return Response(msg)
+@app.route("/vod/<resource>")
+def Vod(resource):
+    if resource == 'big_buck_bunny.f4m':
+        port=request_dns()
+        msg=requests.get('http://localhost:'+str(port)+"/vod/big_buck_bunny.f4m")
+        return Response(msg)
+    else:
+        port=request_dns()
+        print(resource)
+        serverResponse=requests.get('http://localhost:'+str(port)+'/vod/1000'+resource,headers=request.headers,data=request.data)
+        return Response(serverResponse)
 def modify_request(message):
     """
     Here you should change the requested bit rate according to your computation of throughput.
@@ -16,10 +37,19 @@ def modify_request(message):
     for client and leave big_buck_bunny.f4m for the use in proxy.
     """
 
-def request_dns():
-    """
-    Request dns server here.
-    """
+def request_dns(message):
+    # return 8080
+    serverName = '127.0.0.1'
+    serverPort = 8888
+    socketAddress = (serverName, serverPort)
+    ss = socket(AF_INET, SOCK_STREAM)
+    ss.connect(socketAddress)
+    ss.send(message.encode('utf-8'))
+    msg = ss.recvfrom(1024)
+    if not msg:
+        print("None recevied\n")
+    print(bytes.decode(msg[0]),flush=True)
+    return bytes.decode(msg[0])
 
 def calculate_throughput():
     """

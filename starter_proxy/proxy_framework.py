@@ -11,10 +11,6 @@ from dns import *
 import dns
 import argparse
 
-"""
-This framework is just a reference for beginning. Feel free to change it!
-Have a good luck!
-"""
 
 def recv(s):
     """
@@ -90,6 +86,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='start proxying......')
     parser.add_argument('-p', '--port', required=True,
                             help='listening port for proxy.')
+    parser.add_argument('-l','--log',required=True,
+                            help='log path.')
     args = parser.parse_args()
 
     """
