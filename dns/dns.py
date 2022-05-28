@@ -1,11 +1,13 @@
 import argparse
 import socket
+from urllib import response
 
 class DNSServer:
     def __init__(self, ip, port, servers) -> None:
         self.ip = ip
         self.port = port
         self.servers = []
+        self.pointer = -1
         self.read_server_ports(servers)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((self.ip, self.port))
@@ -14,19 +16,24 @@ class DNSServer:
         while True:
             message, address = self.receive()
             message = message.decode('utf-8')
-            print("receive: %s" % message)
-            self.replay(message, address)  
+            response = self.handle(message)
+            self.replay(response, address)  
         
     def receive(self):
         return self.socket.recvfrom(8192)
     
     def replay(self, response, address):
-        self.socket.sendto(str(self.servers[0]).encode('utf-8'), address)
+        self.socket.sendto(response.encode('utf-8'), address)
         
     def read_server_ports(self, servers):
         with open(servers, 'r') as f:
             port_lines = f.readlines()
-            self.servers = [int(port) for port in port_lines]
+            self.servers = [port for port in port_lines]
+    
+    def handle(self, message):
+        self.pointer = self.pointer + 1
+        server = self.pointer % len(self.servers)
+        return self.servers[server]    
 
 def get_agrgument():
     parser = argparse.ArgumentParser()
