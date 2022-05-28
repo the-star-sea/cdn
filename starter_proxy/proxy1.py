@@ -56,14 +56,14 @@ def Vod(resource):
             if 1.5 * item <= tC:
                 bitrate = item
         ts = time.time()
-        serverResponse = requests.get(
+        res = requests.get(
             'http://localhost:' + str(port) + '/vod/' + f'{bitrate}Seg{seqNum}-Frag{fragNum}',
             headers=request.headers, data=request.data)
         tf = time.time()
-        length = int(serverResponse.headers.get('Content-Length'))
+        length = int(res.headers.get('Content-Length'))
         tN = 8*length / (tf - ts)
         tMap[port] = a * tN + (1 - a) * tC
-        return Response(serverResponse)
+        return Response(res)
 
 
 
