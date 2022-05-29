@@ -89,10 +89,11 @@ def calculate_throughput():
 
 
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--filename", type=str, required=True)
-    parser.add_argument("-a", "--a", type=int, required=True)
+    parser.add_argument("-a", "--a", type=float, required=True)
     args = parser.parse_args()
     global logFile
     logFile = open('logs/' + args.a + args.filename, "w")
