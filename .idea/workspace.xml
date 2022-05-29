@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="243faa89-1fae-4a3c-8fef-ee66f45fa0e1" name="Changes" comment="nb">
+      <change afterPath="$PROJECT_DIR$/starter_proxy/proxy2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/conf.sh" beforeDir="false" afterPath="$PROJECT_DIR$/conf.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run.md" beforeDir="false" afterPath="$PROJECT_DIR$/run.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter_proxy/logs/log1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter_proxy/logs/log2" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/starter_proxy/proxy1.py" beforeDir="false" afterPath="$PROJECT_DIR$/starter_proxy/proxy1.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -27,15 +32,15 @@
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "true",
-    "last_opened_file_path": "C:/Users/stone/cdn",
+    "last_opened_file_path": "C:/Users/stone/cdn/starter_proxy",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\stone\cdn\starter_proxy" />
       <recent name="C:\Users\stone\cdn" />
     </key>
   </component>
@@ -102,7 +107,8 @@
       <workItem from="1653700362519" duration="451000" />
       <workItem from="1653700859386" duration="26431000" />
       <workItem from="1653788019060" duration="730000" />
-      <workItem from="1653788769093" duration="4495000" />
+      <workItem from="1653788769093" duration="7597000" />
+      <workItem from="1653803037012" duration="4785000" />
     </task>
     <task id="LOCAL-00001" summary="nb">
       <created>1653708771945</created>
@@ -258,7 +264,35 @@
       <option name="project" value="LOCAL" />
       <updated>1653794317463</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="nb">
+      <created>1653794541959</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1653794541959</updated>
+    </task>
+    <task id="LOCAL-00024" summary="nb">
+      <created>1653794659213</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1653794659213</updated>
+    </task>
+    <task id="LOCAL-00025" summary="nb">
+      <created>1653794667348</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1653794667348</updated>
+    </task>
+    <task id="LOCAL-00026" summary="nb">
+      <created>1653803073905</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1653803073905</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -284,7 +318,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/starter_proxy/proxy1.py</url>
-          <line>103</line>
+          <line>102</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
