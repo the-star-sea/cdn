@@ -43,7 +43,7 @@ def Vod(resource):
     port = request_dns()
     if resource == 'big_buck_bunny.f4m':
         msg=check_init(port)
-        return Response(msg)
+        return None
     else:
         all = re.findall(r'\d+', resource)
         seqNum = all[1]
@@ -96,5 +96,5 @@ if __name__ == '__main__':
     parser.add_argument("-a", "--a", type=float, required=True)
     args = parser.parse_args()
     global logFile
-    logFile = open('logs/' + str(args.a) + args.filename, "w")
+    logFile = open('logs/' + str(args.a) + args.filename, mode='w+')
     app.run(port=8999)
