@@ -43,8 +43,7 @@ def check_init(port):
 def Vod(resource):
     port = request_dns()
     if resource == 'big_buck_bunny.f4m':
-        msg=check_init(port)
-        msg.text=""
+        msg = requests.get('http://localhost:' + str(port) + "/vod/big_buck_bunny_nolist.f4m")
         return Response(msg)
     else:
         all = re.findall(r'\d+', resource)
@@ -63,7 +62,7 @@ def Vod(resource):
             headers=request.headers, data=request.data)
         tf = time.time()
         length = int(res.headers.get('Content-Length'))
-        tN = (8*length / 1024) / (tf - ts) 
+        tN = (length / 1024) / (tf - ts) 
         tMap[port] = args.a * tN + (1 - args.a) * tC
         logFile.write(f'{ts} {tf - ts} {tN} {tMap[port]} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
         logFile.flush()
