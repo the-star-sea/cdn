@@ -29,8 +29,8 @@ var screenHeight = 400; -->
 
 	<div style="position: relative;top: 20px;">
 		<div class="input_box">
-			<textarea id="input_area" style="width: 100%; height: 90%" placeholder="Danmaku" type="text"></textarea>
-			<button class="send">send</button>
+			<textarea id="input_box" readonly style="width: 100%; height: 90%"></textarea>
+			<button>send</button>
 		</div>
 		<div class="picture">
 			<img src="https://img0.baidu.com/it/u=2521851051,2189866243&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500"
@@ -81,7 +81,7 @@ var screenHeight = 400; -->
 	<script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
 	<script>
 		var loc = window.location.host
-		var user = guid();
+
 		// Create a StrobeMediaPlayback configuration
 		var parameters =
 		{
@@ -142,49 +142,56 @@ var screenHeight = 400; -->
 		const danList = [];     // story the text of danmaku
 		const timeList = [];    // story the timestamp of danmaku (although the timestamp is not used )
 		let index = 0;          // index represents the number of danmakus that this client has received
+		// getNewDan(index );
+		// setInterval("getNewDan(index);", 800); // Send a query to the server every 800ms to get new danmaku
 		var currentTime = 0;
 		var lastTime = 0;
 
 		setInterval("getNewDan(lastTime);", 800);
-		setInterval("updateLastTime();", 200);
+		// setInterval("updateLastTime();", 200);
 
 
 		function getVideoTime() {
 			var videoPlayer = document.getElementById("strobeMediaPlayback");
 			let state = videoPlayer.getState();
-			currentTime = videoPlayer.getCurrentTime();
+			// if (!(state == "ready")){
+				console.log("test");
+				currentTime = videoPlayer.getCurrentTime();
+			// }
+			console.log(currentTime);
 			var res = currentTime;
 			return res;
 		}
 
 		function updateLastTime() {
 			lastTime = Math.floor(getVideoTime());
+			// var videoPlayer = document.getElementById("strobeMediaPlayback");
+			// currentTime = videoPlayer.getCurrentTime();
+			// console.log(currentTime);
 		}
 
 		$(".send").on("click", function () {
 			// TODO: send danmaku to server
-			var input_element = document.getElementById('input_area');
-			var danmakuItem = input_element.value;   // get the item from the input field
-			input_element.value = "";
+			var danmakuItem = document.getElementById('danmakutext').value;   // get the item from the input field
 			var videoTime = getVideoTime();
-			json_data = {
-				username: user,
-				item: danmakuItem,
-				time: videoTime,
+			let json_d = {
+				danmaku: danmakuItem,
+				videoTime: videoTime
 			};
-			msg_json = JSON.stringify(json_data);
+			let jsonstr = JSON.stringify(json_d);
 			const httpRequest = new XMLHttpRequest();       // construct a http post request
 			httpRequest.withCredentials = false;
-			httpRequest.open("post", "http://127.0.0.1:8999/post");
+			httpRequest.open("post", "http://127.0.0.1:8999");
 			httpRequest.setRequestHeader("Content-Type", "text/plain");     // set the Content-Type to meet the cross-domain requirements
-			httpRequest.send(msg_json);     // send danmakus with timestamp
+			const time = new Date().getTime();      // get time stamp
+			httpRequest.send(jsonstr);     // send danmakus with timestamp
 		});
-		var flag;
+
 		function getNewDan(lastTime) {
-			if (lastTime === flag) {
-				return;
+			getVideoTime();
+			if (currentTime < lastTime + 1) {
+				return null;
 			}
-			flag = lastTime;
 			const httpRequest = new XMLHttpRequest();       // construct a http get request with index
 			httpRequest.withCredentials = false;
 			httpRequest.open("get", "http://127.0.0.1:8999/getDamuku/" + lastTime, true);
@@ -199,7 +206,6 @@ var screenHeight = 400; -->
 					receive(res);       // get response message
 				}
 			}
-			console.log(res);
 			// return JSON.parse(res);
 		}
 
@@ -208,10 +214,21 @@ var screenHeight = 400; -->
 			if (ds.length === 0) {
 				return;
 			}
-			console.log(ds);
+			// cur_id = cur_id + ds.length;
 			for (let i in ds) {
-				setTimeout(addInterval(createDanmaku(ds[i].item)), 500 * (i + 1));
+				addInterval(createDanmaku(ds[i].danmaku));
 			}
+
+			// console.log("res: " + res);     // parse response message
+			// const list = res.trim().split(" ");
+			// JSON.
+			// 	for(let i = 0; i < list.length; i++) {
+			// 	// danList.push(list[i].split("-")[0]);        // put the danmaku and timestamp into the list
+			// 	// timeList.push(list[i].split("-")[1]);
+			// 	addInterval(createDanmaku(list[i].split("-")[0]));      // display the danmaku
+			// 	// index = index + 1;          // update index, which means the client receives a new danmakus
+			// }
+			// console.log("index: " + index);
 		}
 
 
@@ -245,15 +262,6 @@ var screenHeight = 400; -->
 				}
 			}, 5); // set delay as 5ms,which means the danmaku changes its position every 5ms
 			timers.push(timer);
-		}
-
-		function guid() {
-			//return 'xxxxxxxxxxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-			//	var r = Math.random() * 16 | 0,
-			//		v = c == 'x' ? r : (r & 0x3 | 0x8);
-			//	return v.toString(16);
-			//});
-			return "1"
 		}
 	</script>
 </body>

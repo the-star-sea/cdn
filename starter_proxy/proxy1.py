@@ -1,4 +1,5 @@
 import argparse
+import json
 import re
 import socket
 import time
@@ -103,13 +104,44 @@ def connectMysql():
 def getDanmuku(lastTime):
     print("sdfgsdherhdfh")
     cursor = db.cursor()
-    sql = "SELECT * FROM danmuku"
+    lastTime = float(lastTime)
+    sql = "select * from danmuku where time >= %s and time < %s;" % (lastTime, lastTime+1)
     cursor.execute(sql)
     results = cursor.fetchall()
-    print("result:",results )
-db = connectMysql()
+    
+    json_list = []
+    for res in results:
+        result_json = {"id": res[0],"username": res[1],"item": res[2],"time": res[3]}
+        json_list.append(result_json)
+    msg = json.dumps(json_list)
+    # print("result:",results )
+    response: Response = Response(msg)
+    response.access_control_allow_origin='*'
+    return response
+
+@app.route('/post/', methods=['POST'])
+def post():
+    if request.method == 'POST':
+        data = json.loads(request.get_data(as_text=True))  
+        username =  data['username']
+        item = data['item']
+        videoTime = data['time']
+        cursor = db.cursor()
+        sql = "insert into Danmuku.danmuku (username, item, time) values (%s, '%s', %s);" \
+        % (username, item, videoTime)
+        logFile.write(sql)
+        logFile.flush()
+        cursor.execute(sql) 
+        db.commit()   
+    response: Response = Response('')
+    response.access_control_allow_origin='*'
+    return response
+
+
 
 if __name__ == '__main__':
+    db = connectMysql()
+    
     getDanmuku(0)
     parser = argparse.ArgumentParser()
     parser.add_argument("--filename", type=str, required=True)
