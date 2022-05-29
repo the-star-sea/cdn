@@ -10,3 +10,4 @@ pip3 install flask
 cd /home
 nohup python3 dns/dns.py --servers docker_setup/netsim/servers/10servers &
 python3 docker_setup/netsim/netsim.py servers start -s docker_setup/netsim/servers/10servers
+nohup python3 starter_proxy/proxy1.py --filename log1 --a 0.85 &
