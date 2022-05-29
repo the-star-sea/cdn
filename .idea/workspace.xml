@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="243faa89-1fae-4a3c-8fef-ee66f45fa0e1" name="Changes" comment="nb">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dns.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dns.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run.md" beforeDir="false" afterPath="$PROJECT_DIR$/run.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/starter_proxy/proxy1.py" beforeDir="false" afterPath="$PROJECT_DIR$/starter_proxy/proxy1.py" afterDir="false" />
     </list>
@@ -32,7 +30,8 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "true",
     "last_opened_file_path": "C:/Users/stone/cdn",
-    "nodejs_package_manager_path": "npm"
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -103,7 +102,7 @@
       <workItem from="1653700362519" duration="451000" />
       <workItem from="1653700859386" duration="26431000" />
       <workItem from="1653788019060" duration="730000" />
-      <workItem from="1653788769093" duration="3003000" />
+      <workItem from="1653788769093" duration="3303000" />
     </task>
     <task id="LOCAL-00001" summary="nb">
       <created>1653708771945</created>
@@ -238,7 +237,14 @@
       <option name="project" value="LOCAL" />
       <updated>1653791873593</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="nb">
+      <created>1653792966964</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1653792966964</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -264,7 +270,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/starter_proxy/proxy1.py</url>
-          <line>99</line>
+          <line>102</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>

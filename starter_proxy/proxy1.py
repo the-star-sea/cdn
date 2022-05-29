@@ -2,6 +2,7 @@ import argparse
 import re
 import socket
 import time
+import os
 from urllib import request
 from flask import Flask, Response,request
 import requests
@@ -43,7 +44,8 @@ def Vod(resource):
     port = request_dns()
     if resource == 'big_buck_bunny.f4m':
         msg=check_init(port)
-        return None
+        msg.text=""
+        return Response(msg)
     else:
         all = re.findall(r'\d+', resource)
         seqNum = all[1]
@@ -95,6 +97,8 @@ if __name__ == '__main__':
     parser.add_argument("--filename", type=str, required=True)
     parser.add_argument("-a", "--a", type=float, required=True)
     args = parser.parse_args()
+    filen='logs/' + str(args.a) + args.filename
+    # os.mknod(filen)
     global logFile
-    logFile = open('logs/' + str(args.a) + args.filename, mode='w+')
+    logFile = open(filen, "w+")
     app.run(port=8999)
