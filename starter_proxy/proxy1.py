@@ -43,8 +43,7 @@ def check_init(port):
 def Vod(resource):
     port = request_dns()
     if resource == 'big_buck_bunny.f4m':
-        msg=check_init(port)
-        msg.text=""
+        msg = requests.get('http://localhost:' + str(port) + "/vod/big_buck_bunny_nolist.f4m")
         return Response(msg)
     else:
         all = re.findall(r'\d+', resource)
