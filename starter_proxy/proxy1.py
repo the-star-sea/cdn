@@ -96,5 +96,5 @@ if __name__ == '__main__':
     parser.add_argument("-a", "--a", type=float, required=True)
     args = parser.parse_args()
     global logFile
-    logFile = open('logs/' + args.a + args.filename, "w")
+    logFile = open('logs/' + str(args.a) + args.filename, "w")
     app.run(port=8999)
