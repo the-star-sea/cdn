@@ -8,7 +8,6 @@ import requests
 tMap={}
 bMap={}
 app = Flask(__name__)
-a=0.5
 @app.route('/')
 def init():
         msg=requests.get('http://localhost:'+str(request_dns()+ "/index.html"),headers=request.headers,data=request.data)
@@ -63,7 +62,7 @@ def Vod(resource):
         tf = time.time()
         length = int(res.headers.get('Content-Length'))
         tN = (8*length / 1024) / (tf - ts) 
-        tMap[port] = a * tN + (1 - a) * tC
+        tMap[port] = args.a * tN + (1 - args.a) * tC
         logFile.write(f'{ts} {tf - ts} {tN} {tMap[port]} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
         logFile.flush()
         return Response(res)
@@ -88,13 +87,13 @@ def calculate_throughput():
     Calculate throughput here.
     """
 
-def init_log_file():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--filename", type=str, required=True)
-    args = parser.parse_args()
-    global logFile 
-    logFile= open('logs/'+args.filename,"w")
+
 
 if __name__ == '__main__':
-    init_log_file()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--filename", type=str, required=True)
+    parser.add_argument("-a", "--a", type=int, required=True)
+    args = parser.parse_args()
+    global logFile
+    logFile = open('logs/' + args.a + args.filename, "w")
     app.run(port=8999)

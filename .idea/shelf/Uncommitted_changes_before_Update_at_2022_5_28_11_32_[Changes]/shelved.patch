@@ -1,0 +1,118 @@
+Index: starter_proxy/proxy1_framework.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from urllib import request\nfrom flask import Flask, Response,Request\n\napp = Flask(__name__)\n\n\n@app.route('/example')\ndef simple():\n        return Response(request.get('http://www.example.com'))\n\n\ndef modify_request(message):\n    \"\"\"\n    Here you should change the requested bit rate according to your computation of throughput.\n    And if the request is for big_buck_bunny.f4m, you should instead request big_buck_bunny_nolist.f4m \n    for client and leave big_buck_bunny.f4m for the use in proxy.\n    \"\"\"\n\ndef request_dns():\n    \"\"\"\n    Request dns server here.\n    \"\"\"\n\ndef calculate_throughput():\n    \"\"\"\n    Calculate throughput here.\n    \"\"\"\n\n\nif __name__ == '__main__':\n    app.run(port=8999)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/starter_proxy/proxy1_framework.py b/starter_proxy/proxy1_framework.py
+--- a/starter_proxy/proxy1_framework.py	(revision 029f1452436eb438aa654bd1b115371704bc7eb1)
++++ b/starter_proxy/proxy1_framework.py	(date 1653708734725)
+@@ -1,14 +1,35 @@
++from socket import socket, AF_INET, SOCK_STREAM
+ from urllib import request
+-from flask import Flask, Response,Request
+-
++from flask import Flask, Response,request
++import requests
++bitRatesMap={}
+ app = Flask(__name__)
+ 
+ 
+-@app.route('/example')
+-def simple():
+-        return Response(request.get('http://www.example.com'))
++@app.route('/index.html')
++def init():
++        msg=requests.get('http://localhost:'+str(request_dns()),headers=request.headers,data=request.data)
++        return Response(msg)
+ 
+-
++@app.route('/swfobject.js')
++def swf():
++        msg=requests.get('http://localhost:'+str(request_dns()+"/swfobject.js"),headers=request.headers,data=request.data)
++        return Response(msg)
++@app.route('/StrobeMediaPlayback.swf')
++def swf():
++        msg=requests.get('http://localhost:'+str(request_dns())+"/StrobeMediaPlayback.swf",headers=request.headers,data=request.data)
++        return Response(msg)
++@app.route("/vod/<resource>")
++def Vod(resource):
++    if resource == 'big_buck_bunny.f4m':
++        port=request_dns()
++        msg=requests.get('http://localhost:'+str(port)+"/vod/big_buck_bunny.f4m")
++        return Response(msg)
++    else:
++        port=request_dns()
++        print(resource)
++        serverResponse=requests.get('http://localhost:'+str(port)+'/vod/1000'+resource,headers=request.headers,data=request.data)
++        return Response(serverResponse)
+ def modify_request(message):
+     """
+     Here you should change the requested bit rate according to your computation of throughput.
+@@ -16,10 +37,19 @@
+     for client and leave big_buck_bunny.f4m for the use in proxy.
+     """
+ 
+-def request_dns():
+-    """
+-    Request dns server here.
+-    """
++def request_dns(message):
++    # return 8080
++    serverName = '127.0.0.1'
++    serverPort = 8888
++    socketAddress = (serverName, serverPort)
++    ss = socket(AF_INET, SOCK_STREAM)
++    ss.connect(socketAddress)
++    ss.send(message.encode('utf-8'))
++    msg = ss.recvfrom(1024)
++    if not msg:
++        print("None recevied\n")
++    print(bytes.decode(msg[0]),flush=True)
++    return bytes.decode(msg[0])
+ 
+ def calculate_throughput():
+     """
+Index: starter_proxy/proxy_framework.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import math\nfrom multiprocessing.dummy import active_children\nimport socket\nimport sys\nimport threading\nimport time\nfrom threading import Thread\n\nfrom dns.query import udp\nfrom dns import *\nimport dns\nimport argparse\n\n\"\"\"\nThis framework is just a reference for beginning. Feel free to change it!\nHave a good luck!\n\"\"\"\n\ndef recv(s):\n    \"\"\"\n    recevie the request passed to proxy.\n    \"\"\"\n\ndef send(s):\n    \"\"\"\n    send the response here.\n    \"\"\"  \n\ndef exit():\n    \"\"\"\n    you should provide a way to exit your proxy well.\n    \"\"\"\n\ndef accept(PORT):\n    \"\"\"\n    you should bind the ip of your socket to 0.0.0.0 to make the proxy work well\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    sock.bind((\"0.0.0.0\", PORT))\n\n\ndef modify_request(message):\n    \"\"\"\n    Here you should change the requested bit rate according to your computation of throughput.\n    And if the request is for big_buck_bunny.f4m, you should instead request big_buck_bunny_nolist.f4m \n    for client and leave big_buck_bunny.f4m for the use in proxy.\n    \"\"\"\n\ndef request_dns():\n    \"\"\"\n    Request dns server here. Specify the domain name as you want.\n    \"\"\"\n    query = message.make_query(\"xxx\", dns.rdatatype.A,\n                                        dns.rdataclass.IN)\n\ndef calculate_throughput():\n    \"\"\"\n    Calculate throughput here.\n    \"\"\"\n\n\nclass Proxy():\n    \"\"\"\n    The class is used to manage connections from clients.\n    \"\"\"\n    def __init__(self):\n        self.connection = None\n        self.send_buffer = None\n        self.receive_buffer = None\n        \"\"\"\n        Add field as you want\n        \"\"\"\n\n\nclass Connection():\n    def __init__(self, conn, address):\n        self.conn = conn\n        self.address = address\n        \"\"\"\n        Add field as you want\n        \"\"\"\n    \n\n\nif __name__ == '__main__':\n   \n    \"\"\"\n    Parse command varibles first.\n    \"\"\"\n    parser = argparse.ArgumentParser(description='start proxying......')\n    parser.add_argument('-p', '--port', required=True,\n                            help='listening port for proxy.')\n    args = parser.parse_args()\n\n    \"\"\"\n    Start your proxy.\n    \"\"\"\n\n    accept(args.port)\n    \n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/starter_proxy/proxy_framework.py b/starter_proxy/proxy_framework.py
+--- a/starter_proxy/proxy_framework.py	(revision 029f1452436eb438aa654bd1b115371704bc7eb1)
++++ b/starter_proxy/proxy_framework.py	(date 1653703468293)
+@@ -11,10 +11,6 @@
+ import dns
+ import argparse
+ 
+-"""
+-This framework is just a reference for beginning. Feel free to change it!
+-Have a good luck!
+-"""
+ 
+ def recv(s):
+     """
+@@ -90,6 +86,8 @@
+     parser = argparse.ArgumentParser(description='start proxying......')
+     parser.add_argument('-p', '--port', required=True,
+                             help='listening port for proxy.')
++    parser.add_argument('-l','--log',required=True,
++                            help='log path.')
+     args = parser.parse_args()
+ 
+     """
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+--- /dev/null	(date 1653705926355)
++++ b/.gitignore	(date 1653705926355)
+@@ -0,0 +1,1 @@
++.idea
+\ No newline at end of file
