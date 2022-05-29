@@ -97,7 +97,7 @@ if __name__ == '__main__':
     parser.add_argument("--filename", type=str, required=True)
     parser.add_argument("-a", "--a", type=float, required=True)
     args = parser.parse_args()
-    filen='logs/' + str(args.a) + args.filename
+    filen='starter_proxy/logs/' + str(args.a) + args.filename
     # os.mknod(filen)
     global logFile
     logFile = open(filen, "w+")

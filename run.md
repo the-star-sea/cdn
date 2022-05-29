@@ -8,6 +8,6 @@ python3 docker_setup/netsim/netsim.py onelink start
 python3 docker_setup/netsim/netsim.py onelink stop
 
 # proxy
-nohup python3 proxy1.py --filename log1 --a 0.85 &
+nohup starter_proxy/python3 proxy1.py --filename log1 --a 0.85 &
 # grapher
 python grapher.py logs/netsim_log1 logs/log1 logs/log2
