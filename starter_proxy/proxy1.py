@@ -6,6 +6,8 @@ import os
 from urllib import request
 from flask import Flask, Response,request
 import requests
+import pymysql
+
 tMap={}
 bMap={}
 app = Flask(__name__)
@@ -69,8 +71,6 @@ def Vod(resource):
         return Response(res)
 
 
-
-
 def request_dns(message='port'):
     # return 8080
     serverName = '127.0.0.1'
@@ -88,10 +88,29 @@ def calculate_throughput():
     Calculate throughput here.
     """
 
+def connectMysql():
+    try:
+        db = pymysql.connect(host='localhost',
+                     user='user',
+                     password='123456',
+                     database='Danmuku')
+        print('数据库连接成功!')
+        return db
+    except pymysql.Error as e:
+        print('数据库连接失败'+str(e))
 
-
+@app.route('/getDamuku/<lastTime>')
+def getDanmuku(lastTime):
+    print("sdfgsdherhdfh")
+    cursor = db.cursor()
+    sql = "SELECT * FROM danmuku"
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    print("result:",results )
+db = connectMysql()
 
 if __name__ == '__main__':
+    getDanmuku(0)
     parser = argparse.ArgumentParser()
     parser.add_argument("--filename", type=str, required=True)
     parser.add_argument("-a", "--a", type=float, required=True)
@@ -101,3 +120,5 @@ if __name__ == '__main__':
     global logFile
     logFile = open(filen, "w+")
     app.run(port=8999)
+
+    db.close()

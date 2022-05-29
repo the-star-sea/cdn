@@ -8,6 +8,78 @@ var screenHeight = 400; -->
 	<title>Strobe Media Playback</title>
 	<script type="text/javascript" src="swfobject.js"></script>
 	<script type="text/javascript">
+
+	</script>
+</head>
+
+<body background="https://img1.baidu.com/it/u=722430420,1974228945&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500" style="background-repeat:no-repeat;
+               background-attachment:fixed;
+               background-size:100% 100%; ">
+	<div style="position: relative; top: 20px;">
+		<div class="screen_container" id="contents">
+			<div id="strobeMediaPlayback" style="height: 100%; width: 100%">
+				<p>Alternative content</p>
+			</div>
+		</div>
+
+		<div class="chat_box">
+			<textarea id="chat_box" readonly style="width: 100%; height: 100%"></textarea>
+		</div>
+	</div>
+
+	<div style="position: relative;top: 20px;">
+		<div class="input_box">
+			<textarea id="input_box" readonly style="width: 100%; height: 90%"></textarea>
+			<button>send</button>
+		</div>
+		<div class="picture">
+			<img src="https://img0.baidu.com/it/u=2521851051,2189866243&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500"
+				style="			width: auto;
+			max-width: 310px;
+			height: auto;
+			max-height: 130px; ">
+		</div>
+	</div>
+
+	<style>
+		.screen_container {
+			position: relative;
+			width: 800px;
+			height: 400px;
+			background: #000;
+			float: left;
+		}
+
+		.chat_box {
+			left: 20px;
+			position: relative;
+			width: 300px;
+			height: 400px;
+			float: left;
+		}
+
+		.input_box {
+			top: 20px;
+			position: relative;
+			width: 800px;
+			height: 120px;
+			float: left;
+		}
+
+		.picture {
+			left: 20px;
+			top: 20px;
+			position: relative;
+			float: left;
+			width: 310px;
+			height: 130px;
+
+		}
+	</style>
+
+
+	<script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+	<script>
 		var loc = window.location.host
 
 		// Create a StrobeMediaPlayback configuration
@@ -63,76 +135,6 @@ var screenHeight = 400; -->
 				};
 			}
 		}
-	</script>
-</head>
-
-<body background="https://img1.baidu.com/it/u=722430420,1974228945&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500" style="background-repeat:no-repeat;
-               background-attachment:fixed;
-               background-size:100% 100%; ">
-	<div style="position: relative; top: 20px;">
-		<div class="screen_container" id="contents">
-			<div id="strobeMediaPlayback" style="height: 100%; width: 100%">
-				<p>Alternative content</p>
-			</div>
-		</div>
-
-		<div class="chat_box">
-			<textarea id="chat_box" readonly style="width: 100%; height: 100%"></textarea>
-		</div>
-	</div>
-
-	<div style="position: relative;top: 20px;">
-		<div class="input_box">
-			<textarea id="input_box" readonly style="width: 100%; height: 100%"></textarea>
-		</div>
-		<div class="picture">
-			<img src="https://img0.baidu.com/it/u=2521851051,2189866243&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500"
-				style="			width: auto;
-			max-width: 310px;
-			height: auto;
-			max-height: 130px; ">
-		</div>
-	</div>
-
-	<style>
-		.screen_container {
-			position: relative;
-			width: 800px;
-			height: 400px;
-			background: #000;
-			float: left;
-		}
-
-		.chat_box {
-			left: 20px;
-			position: relative;
-			width: 300px;
-			height: 400px;
-			float: left;
-		}
-
-		.input_box {
-			top: 20px;
-			position: relative;
-			width: 800px;
-			height: 120px;
-			float: left;
-		}
-
-		.picture {
-			left: 20px;
-			top: 20px;
-			position: relative;
-			float: left;
-			width: 310px;
-			height: 130px;
-
-		}
-	</style>
-
-
-	<script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
-	<script>
 		const timers = [];
 		const jqueryDom = createDanmaku('hihihi'); // test danmaku, delete it as you like
 		addInterval(jqueryDom);// test danmaku, delete it as you like
@@ -141,47 +143,91 @@ var screenHeight = 400; -->
 		const timeList = [];    // story the timestamp of danmaku (although the timestamp is not used )
 		let index = 0;          // index represents the number of danmakus that this client has received
 		// getNewDan(index );
-		setInterval("getNewDan(index);", 800); // Send a query to the server every 800ms to get new danmaku
+		// setInterval("getNewDan(index);", 800); // Send a query to the server every 800ms to get new danmaku
+		var currentTime = 0;
+		var lastTime = 0;
 
+		setInterval("getNewDan(lastTime);", 800);
+		// setInterval("updateLastTime();", 200);
+
+
+		function getVideoTime() {
+			var videoPlayer = document.getElementById("strobeMediaPlayback");
+			let state = videoPlayer.getState();
+			// if (!(state == "ready")){
+				console.log("test");
+				currentTime = videoPlayer.getCurrentTime();
+			// }
+			console.log(currentTime);
+			var res = currentTime;
+			return res;
+		}
+
+		function updateLastTime() {
+			lastTime = Math.floor(getVideoTime());
+			// var videoPlayer = document.getElementById("strobeMediaPlayback");
+			// currentTime = videoPlayer.getCurrentTime();
+			// console.log(currentTime);
+		}
 
 		$(".send").on("click", function () {
 			// TODO: send danmaku to server
-			const danmakuItem = document.getElementById('danmakutext').value;   // get the item from the input field
+			var danmakuItem = document.getElementById('danmakutext').value;   // get the item from the input field
+			var videoTime = getVideoTime();
+			let json_d = {
+				danmaku: danmakuItem,
+				videoTime: videoTime
+			};
+			let jsonstr = JSON.stringify(json_d);
 			const httpRequest = new XMLHttpRequest();       // construct a http post request
 			httpRequest.withCredentials = false;
-			httpRequest.open("post", "http://127.0.0.1:8765");
+			httpRequest.open("post", "http://127.0.0.1:8999");
 			httpRequest.setRequestHeader("Content-Type", "text/plain");     // set the Content-Type to meet the cross-domain requirements
 			const time = new Date().getTime();      // get time stamp
-			httpRequest.send(danmakuItem + " " + time);     // send danmakus with timestamp
+			httpRequest.send(jsonstr);     // send danmakus with timestamp
 		});
 
-		// function getNewDan(index) {
-		// 	const httpRequest = new XMLHttpRequest();       // construct a http get request with index
-		// 	httpRequest.withCredentials = false;
-		// 	httpRequest.open("get", "http://127.0.0.1:8765?index=" + index, true);
-		// 	httpRequest.setRequestHeader("Content-Type", "text/plain");     // set the Content-Type to meet the cross-domain requirements
-		// 	httpRequest.send();
-		// 	let res = "";
-		// 	httpRequest.onreadystatechange = function () {
-		// 		if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-		// 			res = httpRequest.responseText;
-		// 			receive(res);       // get response message
-		// 		}
-		// 	}
-		// }
+		function getNewDan(lastTime) {
+			getVideoTime();
+			if (currentTime < lastTime + 1) {
+				return null;
+			}
+			const httpRequest = new XMLHttpRequest();       // construct a http get request with index
+			httpRequest.withCredentials = false;
+			httpRequest.open("get", "http://127.0.0.1:8999/getDamuku/" + lastTime, true);
+			// JSON.parse()
+			httpRequest.setRequestHeader("Content-Type", "text/plain");     // set the Content-Type to meet the cross-domain requirements
+			httpRequest.send();
+			let res = "";
+
+			httpRequest.onreadystatechange = function () {
+				if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+					res = httpRequest.responseText;
+					receive(res);       // get response message
+				}
+			}
+			// return JSON.parse(res);
+		}
 
 		function receive(res) {
-			if (res.length === 0) {
+			let ds = JSON.parse(res);
+			if (ds.length === 0) {
 				return;
 			}
-			console.log("res: " + res);     // parse response message
-			const list = res.trim().split(" ");
-			for (let i = 0; i < list.length; i++) {
-				danList.push(list[i].split("-")[0]);        // put the danmaku and timestamp into the list
-				timeList.push(list[i].split("-")[1]);
-				addInterval(createDanmaku(list[i].split("-")[0]));      // display the danmaku
-				index = index + 1;          // update index, which means the client receives a new danmakus
+			// cur_id = cur_id + ds.length;
+			for (let i in ds) {
+				addInterval(createDanmaku(ds[i].danmaku));
 			}
+
+			// console.log("res: " + res);     // parse response message
+			// const list = res.trim().split(" ");
+			// JSON.
+			// 	for(let i = 0; i < list.length; i++) {
+			// 	// danList.push(list[i].split("-")[0]);        // put the danmaku and timestamp into the list
+			// 	// timeList.push(list[i].split("-")[1]);
+			// 	addInterval(createDanmaku(list[i].split("-")[0]));      // display the danmaku
+			// 	// index = index + 1;          // update index, which means the client receives a new danmakus
+			// }
 			// console.log("index: " + index);
 		}
 
@@ -219,6 +265,5 @@ var screenHeight = 400; -->
 		}
 	</script>
 </body>
-
 
 </html>
