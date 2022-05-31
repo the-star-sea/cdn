@@ -96,7 +96,7 @@ def calculate_throughput():
 
 def connectMysql():
     try:
-        db = pymysql.connect(host='127.0.0.1',
+        db = pymysql.connect(host='101.34.204.124',
                      user='user',
                      password='123456',
                      database='Danmuku')
@@ -109,6 +109,7 @@ def connectMysql():
 @app.route('/getDamuku/<lastTime>')
 def getDanmuku(lastTime):
     print("getDan")
+    db.ping(reconnect=True)
     cursor = db.cursor()
     lastTime = float(lastTime)
     sql = "select * from danmuku where time >= %s and time < %s;" % (lastTime, lastTime+1)
@@ -139,7 +140,7 @@ def post():
         % (username, item, videoTime)
         db.ping(reconnect=True)
         cursor.execute(sql) 
-        db.commit()   
+        db.commit()
     response: Response = Response('')
     response.access_control_allow_origin='*'
     return response
@@ -154,6 +155,6 @@ if __name__ == '__main__':
     # os.mknod(filen)
     global logFile
     logFile = open(filen, "w+")
-    app.run(port=8200)
+    app.run(port=8999)
 
     db.close()
