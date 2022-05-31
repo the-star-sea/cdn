@@ -135,12 +135,8 @@ def post():
         item = data['item']
         videoTime = str(float(data['time']) + 2)
         cursor = db.cursor()
-        logFile.write("ready to insert")
-        logFile.flush()
         sql = "insert into Danmuku.danmuku (username, item, time) values (%s, '%s', %s);" \
         % (username, item, videoTime)
-        logFile.write(sql)
-        logFile.flush()
         db.ping(reconnect=True)
         cursor.execute(sql) 
         db.commit()   
