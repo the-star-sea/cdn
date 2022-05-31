@@ -12,67 +12,69 @@ var screenHeight = 400; -->
 	</script>
 </head>
 
-<body background="https://img1.baidu.com/it/u=722430420,1974228945&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500" style="background-repeat:no-repeat;
+<body background="https://img2.baidu.com/it/u=2106554023,1551546689&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800" style="background-repeat:no-repeat;
                background-attachment:fixed;
                background-size:100% 100%; ">
 	<div style="position: relative; top: 20px;">
-		<div class="screen_container" id="contents">
-			<div id="strobeMediaPlayback" style="height: 100%; width: 100%">
+		<div class="screen_container" id="contents " style="margin: auto;">
+			<div id="strobeMediaPlayback" style="height: 100%; width: 100%;">
 				<p>Alternative content</p>
 			</div>
 		</div>
-
-		<div class="chat_box">
-			<textarea id="chat_box" readonly style="width: 100%; height: 100%"></textarea>
-		</div>
 	</div>
 
-	<div style="position: relative;top: 20px;">
-		<div class="input_box">
-			<textarea id="input_area" style="width: 100%; height: 90%" placeholder="Danmaku" type="text"></textarea>
-			<button class="send">send</button>
-		</div>
-		<div class="picture">
-			<img src="https://img0.baidu.com/it/u=2521851051,2189866243&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500"
-				style="			width: auto;
-			max-width: 310px;
-			height: auto;
-			max-height: 130px; ">
+	<div style="position: relative;top: 20px; ">
+		<div class="input_box ">
+			<textarea class="input_area" placeholder="Danmaku"
+				type="text background-color:rgba(255,0,255,0.5);"></textarea>
+			<button class="send">S E N D</button>
 		</div>
 	</div>
-
 	<style>
 		.screen_container {
+			border-radius: 5px;
 			position: relative;
 			width: 800px;
 			height: 400px;
-			background: #000;
-			float: left;
-		}
-
-		.chat_box {
-			left: 20px;
-			position: relative;
-			width: 300px;
-			height: 400px;
-			float: left;
+			background: rgba(0, 0, 0, 0.2);
+			;
+			margin: 0px auto;
+			border-radius: 5px;
 		}
 
 		.input_box {
+			border-radius: 5px;
 			top: 20px;
 			position: relative;
 			width: 800px;
-			height: 120px;
-			float: left;
+			height: 100px;
+			margin: 0px auto;
+			text-align: center;
 		}
 
-		.picture {
-			left: 20px;
-			top: 20px;
+		.input_area {
+			border: 0;
+			color: rgb(184, 219, 230);
+			border-radius: 5px;
+			background-color: rgba(241, 241, 241, 0.1);
+			width: 780px;
+			height: 70px;
+			padding: 10px;
+			resize: none;
+			overflow: hidden;
+		}
+
+		.send {
+			border: 0;
+			border-radius: 5px;
+			font-size: large;
+			color: rgb(184, 219, 230);
 			position: relative;
-			float: left;
-			width: 310px;
-			height: 130px;
+			width: 400px;
+			height: 35px;
+			background-color: rgba(209, 80, 136, 0.3);
+			margin: 0px auto;
+			resize: none;
 
 		}
 	</style>
@@ -103,7 +105,6 @@ var screenHeight = 400; -->
 				, { allowFullScreen: "true" }
 				, { name: "strobeMediaPlayback" }
 			);
-
 
 		function onCurrentTimeChange(time, playerId) {
 			document.getElementById("currentTime").innerHTML = time;
@@ -139,32 +140,26 @@ var screenHeight = 400; -->
 		const jqueryDom = createDanmaku('hihihi'); // test danmaku, delete it as you like
 		addInterval(jqueryDom);// test danmaku, delete it as you like
 
-		const danList = [];     // story the text of danmaku
-		const timeList = [];    // story the timestamp of danmaku (although the timestamp is not used )
-		let index = 0;          // index represents the number of danmakus that this client has received
+
+		setInterval("getNewDan(currentTime);", 1000); // Send a query to the server every 800ms to get new danmaku
+		setInterval("updateCurrentTime();", 100);
 		var currentTime = 0;
-		var lastTime = 0;
-
-		setInterval("getNewDan(lastTime);", 800);
-		setInterval("updateLastTime();", 200);
-
-
 		function getVideoTime() {
 			var videoPlayer = document.getElementById("strobeMediaPlayback");
-			let state = videoPlayer.getState();
-			currentTime = videoPlayer.getCurrentTime();
-			var res = currentTime;
+			var res = videoPlayer.getCurrentTime();
 			return res;
 		}
 
-		function updateLastTime() {
-			lastTime = Math.floor(getVideoTime());
+		function updateCurrentTime() {
+			currentTime = getVideoTime();
 		}
+
 
 		$(".send").on("click", function () {
 			// TODO: send danmaku to server
-			var input_element = document.getElementById('input_area');
-			var danmakuItem = input_element.value;   // get the item from the input field
+			var input_element = document.getElementsByClassName('input_area');
+			var danmakuItem = input_element[0].value;   // get the item from the input field
+			console.log(danmakuItem);
 			input_element.value = "";
 			var videoTime = getVideoTime();
 			json_data = {
@@ -179,20 +174,18 @@ var screenHeight = 400; -->
 			httpRequest.setRequestHeader("Content-Type", "text/plain");     // set the Content-Type to meet the cross-domain requirements
 			httpRequest.send(msg_json);     // send danmakus with timestamp
 		});
-		var flag;
-		function getNewDan(lastTime) {
-			if (lastTime === flag) {
-				return;
+
+		function getNewDan(currentTime) {
+			var videoPlayer = document.getElementById("strobeMediaPlayback");
+			if (videoPlayer.getState() != "playing") {
+				return null;
 			}
-			flag = lastTime;
 			const httpRequest = new XMLHttpRequest();       // construct a http get request with index
 			httpRequest.withCredentials = false;
-			httpRequest.open("get", "http://127.0.0.1:8999/getDamuku/" + lastTime, true);
-			// JSON.parse()
+			httpRequest.open("get", "http://127.0.0.1:8999/getDamuku/" + Math.floor(currentTime), true);
 			httpRequest.setRequestHeader("Content-Type", "text/plain");     // set the Content-Type to meet the cross-domain requirements
 			httpRequest.send();
 			let res = "";
-
 			httpRequest.onreadystatechange = function () {
 				if (httpRequest.readyState === 4 && httpRequest.status === 200) {
 					res = httpRequest.responseText;
@@ -214,11 +207,10 @@ var screenHeight = 400; -->
 			}
 		}
 
-
 		// create a Dom object corresponding to a danmaku
 		function createDanmaku(text) {
 			const jqueryDom = $("<div class='bullet'>" + text + "</div>");
-			const fontColor = "rgb(255,255,255)";
+			const fontColor = "rgb(255,0,255)";
 			const fontSize = "20px";
 			let top = Math.floor(Math.random() * 400) + "px";
 			const left = $(".screen_container").width() + "px";
@@ -257,5 +249,4 @@ var screenHeight = 400; -->
 		}
 	</script>
 </body>
-
 </html>

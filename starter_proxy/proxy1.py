@@ -4,6 +4,7 @@ import re
 import socket
 import time
 import os
+from tokenize import Double
 from urllib import request
 from flask import Flask, Response,request
 import requests
@@ -91,10 +92,11 @@ def calculate_throughput():
 
 def connectMysql():
     try:
-        db = pymysql.connect(host='localhost',
+        db = pymysql.connect(host='127.0.0.1',
                      user='user',
                      password='123456',
                      database='Danmuku')
+
         print('数据库连接成功!')
         return db
     except pymysql.Error as e:
@@ -102,13 +104,15 @@ def connectMysql():
 
 @app.route('/getDamuku/<lastTime>')
 def getDanmuku(lastTime):
-    print("sdfgsdherhdfh")
+    print("getDan")
     cursor = db.cursor()
     lastTime = float(lastTime)
     sql = "select * from danmuku where time >= %s and time < %s;" % (lastTime, lastTime+1)
+    print(sql)
     cursor.execute(sql)
+    # db.commit()  
     results = cursor.fetchall()
-    
+
     json_list = []
     for res in results:
         result_json = {"id": res[0],"username": res[1],"item": res[2],"time": res[3]}
@@ -119,30 +123,29 @@ def getDanmuku(lastTime):
     response.access_control_allow_origin='*'
     return response
 
-@app.route('/post/', methods=['POST'])
+@app.route('/post', methods=['POST'])
 def post():
     if request.method == 'POST':
         data = json.loads(request.get_data(as_text=True))  
         username =  data['username']
         item = data['item']
-        videoTime = data['time']
+        videoTime = str(float(data['time']) + 2)
         cursor = db.cursor()
+        logFile.write("ready to insert")
+        logFile.flush()
         sql = "insert into Danmuku.danmuku (username, item, time) values (%s, '%s', %s);" \
         % (username, item, videoTime)
         logFile.write(sql)
         logFile.flush()
+        db.ping(reconnect=True)
         cursor.execute(sql) 
         db.commit()   
     response: Response = Response('')
     response.access_control_allow_origin='*'
     return response
 
-
-
 if __name__ == '__main__':
     db = connectMysql()
-    
-    getDanmuku(0)
     parser = argparse.ArgumentParser()
     parser.add_argument("--filename", type=str, required=True)
     parser.add_argument("-a", "--a", type=float, required=True)
