@@ -1,5 +1,7 @@
 # dns 
 nohup python3 dns/dns.py --servers docker_setup/netsim/servers/10servers &
+python3 dns/dns.py --servers docker_setup/netsim/servers/twolink
+python3 dns/dns.py --servers docker_setup/netsim/servers/onelink
 # server
 python3 docker_setup/netsim/netsim.py servers start -s docker_setup/netsim/servers/10servers
 python3 docker_setup/netsim/netsim.py servers stop -s docker_setup/netsim/servers/10servers

@@ -60,14 +60,18 @@ def Vod(resource):
             if 1.5 * item <= tC:
                 bitrate = item
         ts = time.time()
+        
         res = requests.get(
             'http://localhost:' + str(port) + '/vod/' + f'{bitrate}Seg{seqNum}-Frag{fragNum}',
             headers=request.headers, data=request.data)
-        tf = time.time()
+        tf = time.perf_counter()
+        duration = res.elapsed.total_seconds()
         length = int(res.headers.get('Content-Length'))
-        tN = (length / 1024) / (tf - ts)
+        # tN = (length / 1024) / (tf - ts)
+        tN = (length * 8 /1024) / duration
         tMap[port] = args.a * tN + (1 - args.a) * tC
-        logFile.write(f'{ts} {tf - ts} {tN} {tMap[port]} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
+        # logFile.write(f'{ts} {tf - ts} {tN} {tMap[port]} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
+        logFile.write(f'{ts} {duration} {tN} {tMap[port]} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
         logFile.flush()
         return Response(res)
 
