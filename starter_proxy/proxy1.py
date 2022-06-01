@@ -5,6 +5,7 @@ import socket
 import time
 import os
 from urllib import request
+import multiprocessing
 from flask import Flask, Response,request
 import requests
 import pymysql
@@ -168,7 +169,6 @@ def getComment(requestTime):
     cursor.execute(sql)
     # db.commit()  
     results = cursor.fetchall()
-
     json_list = []
     for res in results:
         result_json = {"id": res[0],"username": res[1],"item": res[2],"time": res[3]}
@@ -178,6 +178,23 @@ def getComment(requestTime):
     response: Response = Response(msg)
     response.access_control_allow_origin='*'
     return response
+
+
+@app.route('/exit/<requestTime>')
+def pageExit(requestTime):
+    print("exit " + requestTime)
+    global logFile,db,pro
+    shut=request.environ.get('werkzeug.server.shutdown')
+    if shut is not None:  
+        shut()
+    logFile.close()
+    db.close()
+    exit(0)
+
+    # msg = ""
+    # response: Response = Response(msg)
+    # response.access_control_allow_origin='*'
+    # return response
 
 
 if __name__ == '__main__':
@@ -190,5 +207,5 @@ if __name__ == '__main__':
     # os.mknod(filen)
     global logFile
     logFile = open(filen, "w+")
-    app.run(port=8999)
-    db.close()
+    pro=multiprocessing.Process(target=app.run, kwargs=dict(port=8999))
+    pro.start()

@@ -47,6 +47,9 @@ var screenHeight = 400; -->
 				</div>
 			</div>
 		</div>
+		<div>
+			<button class="exit">exit</button>
+		</div>
 	</div>
 
 
@@ -172,6 +175,33 @@ var screenHeight = 400; -->
 		}
 
 		.send2:active {
+			border: 0;
+			border-radius: 5px;
+			font-size: large;
+			color: rgb(184, 219, 230);
+			position: relative;
+			width: 150px;
+			height: 35px;
+			background-color: rgba(209, 80, 136, 0.3);
+			margin: 0px auto;
+			resize: none;
+			opacity: 0.5;
+		}
+
+		.exit {
+			border: 0;
+			border-radius: 5px;
+			font-size: large;
+			color: rgb(184, 219, 230);
+			position: relative;
+			width: 150px;
+			height: 35px;
+			background-color: rgba(209, 80, 136, 0.3);
+			margin: 0px auto;
+			resize: none;
+		}
+
+		.exit:active {
 			border: 0;
 			border-radius: 5px;
 			font-size: large;
@@ -321,6 +351,23 @@ var screenHeight = 400; -->
 			httpRequest.open("post", "http://127.0.0.1:8999/post");
 			httpRequest.setRequestHeader("Content-Type", "text/plain");     // set the Content-Type to meet the cross-domain requirements
 			httpRequest.send(msg_json);     // send danmakus with timestamp
+		});
+
+
+		$(".exit").on("click", function () {
+			requestTime = Date.parse(new Date());
+			const httpRequest = new XMLHttpRequest();       // construct a http get request with index
+			httpRequest.withCredentials = false;
+			httpRequest.open("get", "http://127.0.0.1:8999/exit/" + requestTime, true);
+			httpRequest.setRequestHeader("Content-Type", "text/plain");     // set the Content-Type to meet the cross-domain requirements
+			httpRequest.send();
+			let res = "";
+			httpRequest.onreadystatechange = function () {
+				if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+					res = httpRequest.responseText;
+					receive(res);       // get response message
+				}
+			}
 		});
 
 		function getNewDan(currentTime) {
