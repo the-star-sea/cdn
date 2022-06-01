@@ -4,7 +4,6 @@ import re
 import socket
 import time
 import os
-from tokenize import Double
 from urllib import request
 from flask import Flask, Response,request
 import requests
@@ -56,23 +55,19 @@ def Vod(resource):
         if port not in tMap.keys():
             check_init(port)
         tC = tMap[port]
-        bitrate=-1000
+        bitrate=10
         for item in bMap[port]:
             if 1.5 * item <= tC:
                 bitrate = item
         ts = time.time()
-        
         res = requests.get(
             'http://localhost:' + str(port) + '/vod/' + f'{bitrate}Seg{seqNum}-Frag{fragNum}',
             headers=request.headers, data=request.data)
-        tf = time.perf_counter()
-        duration = res.elapsed.total_seconds()
+        tf = time.time()
         length = int(res.headers.get('Content-Length'))
-        # tN = (length / 1024) / (tf - ts)
-        tN = (length * 8 /1024) / duration
+        tN = (length / 1024) / (tf - ts)
         tMap[port] = args.a * tN + (1 - args.a) * tC
-        # logFile.write(f'{ts} {tf - ts} {tN} {tMap[port]} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
-        logFile.write(f'{ts} {duration} {tN} {tMap[port]} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
+        logFile.write(f'{ts} {tf - ts} {tN} {tMap[port]} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
         logFile.flush()
         return Response(res)
 
@@ -96,11 +91,10 @@ def calculate_throughput():
 
 def connectMysql():
     try:
-        db = pymysql.connect(host='127.0.0.1',
+        db = pymysql.connect(host='101.34.204.124',
                      user='user',
                      password='123456',
                      database='Danmuku')
-
         print('数据库连接成功!')
         return db
     except pymysql.Error as e:
@@ -108,15 +102,13 @@ def connectMysql():
 
 @app.route('/getDamuku/<lastTime>')
 def getDanmuku(lastTime):
-    print("getDan")
+    print("sdfgsdherhdfh")
     cursor = db.cursor()
     lastTime = float(lastTime)
     sql = "select * from danmuku where time >= %s and time < %s;" % (lastTime, lastTime+1)
-    print(sql)
     cursor.execute(sql)
-    # db.commit()  
     results = cursor.fetchall()
-
+    
     json_list = []
     for res in results:
         result_json = {"id": res[0],"username": res[1],"item": res[2],"time": res[3]}
@@ -127,25 +119,30 @@ def getDanmuku(lastTime):
     response.access_control_allow_origin='*'
     return response
 
-@app.route('/post', methods=['POST'])
+@app.route('/post/', methods=['POST'])
 def post():
     if request.method == 'POST':
         data = json.loads(request.get_data(as_text=True))  
         username =  data['username']
         item = data['item']
-        videoTime = str(float(data['time']) + 2)
+        videoTime = data['time']
         cursor = db.cursor()
         sql = "insert into Danmuku.danmuku (username, item, time) values (%s, '%s', %s);" \
         % (username, item, videoTime)
-        db.ping(reconnect=True)
+        logFile.write(sql)
+        logFile.flush()
         cursor.execute(sql) 
         db.commit()   
     response: Response = Response('')
     response.access_control_allow_origin='*'
     return response
 
+
+
 if __name__ == '__main__':
     db = connectMysql()
+    
+    getDanmuku(0)
     parser = argparse.ArgumentParser()
     parser.add_argument("--filename", type=str, required=True)
     parser.add_argument("-a", "--a", type=float, required=True)

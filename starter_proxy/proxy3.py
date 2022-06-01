@@ -55,7 +55,7 @@ def Vod(resource):
         if port not in tMap.keys():
             check_init(port)
         tC = tMap[port]
-        bitrate=-1000
+        bitrate=10
         for item in bMap[port]:
             if 1.5 * item <= tC:
                 bitrate = item
@@ -64,11 +64,11 @@ def Vod(resource):
         res = requests.get(
             'http://localhost:' + str(port) + '/vod/' + f'{bitrate}Seg{seqNum}-Frag{fragNum}',
             headers=request.headers, data=request.data)
-        tf = time.perf_counter()
-        duration = res.elapsed.total_seconds()
+        tf = time.time()
+        duration = tf-ts
         length = int(res.headers.get('Content-Length'))
-        # tN = (length / 1024) / (tf - ts)
-        tN = (length * 8 /1024) / duration
+        tN = (length / 1024) / (tf - ts)
+        # tN = (length * 8 /1024) / duration
         tMap[port] = args.a * tN + (1 - args.a) * tC
         # logFile.write(f'{ts} {tf - ts} {tN} {tMap[port]} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
         logFile.write(f'{ts} {duration} {tN} {tMap[port]} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
