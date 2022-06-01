@@ -67,7 +67,7 @@ def Vod(resource):
         tf = time.time()
         duration = tf-ts
         length = int(res.headers.get('Content-Length'))
-        tN = (length / 1024) / (tf - ts)
+        tN = (length * 8 / 1024) / (tf - ts)
         # tN = (length * 8 /1024) / duration
         tMap[port] = args.a * tN + (1 - args.a) * tC
         # logFile.write(f'{ts} {tf - ts} {tN} {tMap[port]} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
