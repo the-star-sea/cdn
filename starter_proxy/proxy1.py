@@ -102,9 +102,9 @@ def connectMysql():
     except pymysql.Error as e:
         print('数据库连接失败'+str(e))
 
-@app.route('/getDamuku/<lastTime>')
-def getDanmuku(lastTime):
-    print("getDan")
+@app.route('/getDamuku/<requestTime>/<lastTime>')
+def getDanmuku(requestTime,lastTime):
+    print("getDan" + requestTime)
     db.ping(reconnect=True)
     cursor = db.cursor()
     lastTime = float(lastTime)
@@ -124,7 +124,7 @@ def getDanmuku(lastTime):
     response.access_control_allow_origin='*'
     return response
 
-@app.route('/post/', methods=['POST'])
+@app.route('/post', methods=['POST'])
 def post():
     if request.method == 'POST':
         data = json.loads(request.get_data(as_text=True))  
@@ -158,9 +158,9 @@ def comment():
     response.access_control_allow_origin='*'
     return response
 
-@app.route('/getComment/<commentRefresh>')
-def getComment(commentRefresh):
-    print("getComment" + commentRefresh)
+@app.route('/getComment/<requestTime>')
+def getComment(requestTime):
+    print("getComment" + requestTime)
     db.ping(reconnect=True)
     cursor = db.cursor()
     sql = "select * from Danmuku.comment;" 
@@ -190,6 +190,5 @@ if __name__ == '__main__':
     # os.mknod(filen)
     global logFile
     logFile = open(filen, "w+")
-    app.run(port=8200)
-
+    app.run(port=8999)
     db.close()

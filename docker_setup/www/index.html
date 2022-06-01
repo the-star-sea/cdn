@@ -192,6 +192,7 @@ var screenHeight = 400; -->
 		var loc = window.location.host
 		var user = guid();
 		var commentRefresh = 0;
+		var requestTime = 0;
 		// Create a StrobeMediaPlayback configuration
 		var parameters =
 		{
@@ -285,10 +286,11 @@ var screenHeight = 400; -->
 		});
 
 		$("#refresh").on("click", function () {
+			requestTime = Date.parse(new Date());
 			console.log("commm");
 			const httpRequest = new XMLHttpRequest();       // construct a http get request with index
 			httpRequest.withCredentials = false;
-			httpRequest.open("get", "http://127.0.0.1:8999/getComment/" + commentRefresh, true);
+			httpRequest.open("get", "http://127.0.0.1:8999/getComment/" + requestTime, true);
 			httpRequest.setRequestHeader("Content-Type", "text/plain");     // set the Content-Type to meet the cross-domain requirements
 			httpRequest.send();
 			let res = "";
@@ -298,7 +300,6 @@ var screenHeight = 400; -->
 					receiveComment(res);       // get response message
 				}
 			}
-			commentRefresh++;
 		});
 
 
@@ -323,13 +324,14 @@ var screenHeight = 400; -->
 		});
 
 		function getNewDan(currentTime) {
+			requestTime = Date.parse(new Date());
 			var videoPlayer = document.getElementById("strobeMediaPlayback");
 			if (videoPlayer.getState() != "playing") {
 				return null;
 			}
 			const httpRequest = new XMLHttpRequest();       // construct a http get request with index
 			httpRequest.withCredentials = false;
-			httpRequest.open("get", "http://127.0.0.1:8999/getDamuku/" + Math.floor(currentTime), true);
+			httpRequest.open("get", "http://127.0.0.1:8999/getDamuku/" + requestTime + "/" + Math.floor(currentTime), true);
 			httpRequest.setRequestHeader("Content-Type", "text/plain");     // set the Content-Type to meet the cross-domain requirements
 			httpRequest.send();
 			let res = "";
