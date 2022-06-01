@@ -4,7 +4,6 @@ import re
 import socket
 import time
 import os
-from tokenize import Double
 from urllib import request
 from flask import Flask, Response,request
 import requests
@@ -56,7 +55,7 @@ def Vod(resource):
         if port not in tMap.keys():
             check_init(port)
         tC = tMap[port]
-        bitrate=-1000
+        bitrate=10
         for item in bMap[port]:
             if 1.5 * item <= tC:
                 bitrate = item
@@ -65,14 +64,11 @@ def Vod(resource):
         res = requests.get(
             'http://localhost:' + str(port) + '/vod/' + f'{bitrate}Seg{seqNum}-Frag{fragNum}',
             headers=request.headers, data=request.data)
-        tf = time.perf_counter()
-        duration = res.elapsed.total_seconds()
+        tf = time.time()
         length = int(res.headers.get('Content-Length'))
-        # tN = (length / 1024) / (tf - ts)
-        tN = (length * 8 /1024) / duration
+        tN = (8*length / 1024) / (tf - ts)
         tMap[port] = args.a * tN + (1 - args.a) * tC
-        # logFile.write(f'{ts} {tf - ts} {tN} {tMap[port]} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
-        logFile.write(f'{ts} {duration} {tN} {tMap[port]} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
+        logFile.write(f'{ts} {tf - ts} {tN} {tMap[port]} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
         logFile.flush()
         return Response(res)
 
@@ -128,7 +124,7 @@ def getDanmuku(lastTime):
     response.access_control_allow_origin='*'
     return response
 
-@app.route('/post', methods=['POST'])
+@app.route('/post/', methods=['POST'])
 def post():
     if request.method == 'POST':
         data = json.loads(request.get_data(as_text=True))  
@@ -140,7 +136,7 @@ def post():
         % (username, item, videoTime)
         db.ping(reconnect=True)
         cursor.execute(sql) 
-        db.commit()
+        db.commit()   
     response: Response = Response('')
     response.access_control_allow_origin='*'
     return response
@@ -194,6 +190,6 @@ if __name__ == '__main__':
     # os.mknod(filen)
     global logFile
     logFile = open(filen, "w+")
-    app.run(port=8999)
+    app.run(port=8200)
 
     db.close()
