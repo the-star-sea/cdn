@@ -5,6 +5,7 @@ import socket
 import time
 import os
 from urllib import request
+import multiprocessing
 from flask import Flask, Response,request
 import requests
 import pymysql
@@ -92,7 +93,7 @@ def calculate_throughput():
 
 def connectMysql():
     try:
-        db = pymysql.connect(host='101.34.204.124',
+        db = pymysql.connect(host='127.0.0.1',
                      user='user',
                      password='123456',
                      database='Danmuku')
@@ -102,9 +103,9 @@ def connectMysql():
     except pymysql.Error as e:
         print('数据库连接失败'+str(e))
 
-@app.route('/getDamuku/<lastTime>')
-def getDanmuku(lastTime):
-    print("getDan")
+@app.route('/getDamuku/<requestTime>/<lastTime>')
+def getDanmuku(requestTime,lastTime):
+    print("getDan" + requestTime)
     db.ping(reconnect=True)
     cursor = db.cursor()
     lastTime = float(lastTime)
@@ -124,7 +125,7 @@ def getDanmuku(lastTime):
     response.access_control_allow_origin='*'
     return response
 
-@app.route('/post/', methods=['POST'])
+@app.route('/post', methods=['POST'])
 def post():
     if request.method == 'POST':
         data = json.loads(request.get_data(as_text=True))  
@@ -141,6 +142,61 @@ def post():
     response.access_control_allow_origin='*'
     return response
 
+@app.route('/comment', methods=['POST'])
+def comment():
+    if request.method == 'POST':
+        data = json.loads(request.get_data(as_text=True))  
+        username =  data['username']
+        item = data['item']
+        videoTime = str(float(data['time']) + 2)
+        cursor = db.cursor()
+        sql = "insert into Danmuku.comment (username, item, time) values (%s, '%s', %s);" \
+        % (username, item, videoTime)
+        db.ping(reconnect=True)
+        cursor.execute(sql) 
+        db.commit()
+    response: Response = Response('')
+    response.access_control_allow_origin='*'
+    return response
+
+@app.route('/getComment/<requestTime>')
+def getComment(requestTime):
+    print("getComment" + requestTime)
+    db.ping(reconnect=True)
+    cursor = db.cursor()
+    sql = "select * from Danmuku.comment;" 
+    print(sql)
+    cursor.execute(sql)
+    # db.commit()  
+    results = cursor.fetchall()
+    json_list = []
+    for res in results:
+        result_json = {"id": res[0],"username": res[1],"item": res[2],"time": res[3]}
+        json_list.append(result_json)
+    msg = json.dumps(json_list)
+    # print("result:",results )
+    response: Response = Response(msg)
+    response.access_control_allow_origin='*'
+    return response
+
+
+@app.route('/exit/<requestTime>')
+def pageExit(requestTime):
+    print("exit " + requestTime)
+    global logFile,db,pro
+    shut=request.environ.get('werkzeug.server.shutdown')
+    if shut is not None:  
+        shut()
+    logFile.close()
+    db.close()
+    exit(0)
+
+    # msg = ""
+    # response: Response = Response(msg)
+    # response.access_control_allow_origin='*'
+    # return response
+
+
 if __name__ == '__main__':
     db = connectMysql()
     parser = argparse.ArgumentParser()
@@ -151,6 +207,5 @@ if __name__ == '__main__':
     # os.mknod(filen)
     global logFile
     logFile = open(filen, "w+")
-    app.run(port=8200)
-
-    db.close()
+    pro=multiprocessing.Process(target=app.run, kwargs=dict(port=8999))
+    pro.start()
