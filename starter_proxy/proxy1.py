@@ -60,12 +60,13 @@ def Vod(resource):
             if 1.5 * item <= tC:
                 bitrate = item
         ts = time.time()
+        
         res = requests.get(
             'http://localhost:' + str(port) + '/vod/' + f'{bitrate}Seg{seqNum}-Frag{fragNum}',
             headers=request.headers, data=request.data)
         tf = time.time()
         length = int(res.headers.get('Content-Length'))
-        tN = (length / 1024) / (tf - ts)
+        tN = (8*length / 1024) / (tf - ts)
         tMap[port] = args.a * tN + (1 - args.a) * tC
         logFile.write(f'{ts} {tf - ts} {tN} {tMap[port]} {bitrate} {port} {bitrate}Seg{seqNum}-Frag{fragNum}\n')
         logFile.flush()
@@ -95,6 +96,7 @@ def connectMysql():
                      user='user',
                      password='123456',
                      database='Danmuku')
+
         print('数据库连接成功!')
         return db
     except pymysql.Error as e:
@@ -102,13 +104,16 @@ def connectMysql():
 
 @app.route('/getDamuku/<lastTime>')
 def getDanmuku(lastTime):
-    print("sdfgsdherhdfh")
+    print("getDan")
+    db.ping(reconnect=True)
     cursor = db.cursor()
     lastTime = float(lastTime)
     sql = "select * from danmuku where time >= %s and time < %s;" % (lastTime, lastTime+1)
+    print(sql)
     cursor.execute(sql)
+    # db.commit()  
     results = cursor.fetchall()
-    
+
     json_list = []
     for res in results:
         result_json = {"id": res[0],"username": res[1],"item": res[2],"time": res[3]}
@@ -125,24 +130,19 @@ def post():
         data = json.loads(request.get_data(as_text=True))  
         username =  data['username']
         item = data['item']
-        videoTime = data['time']
+        videoTime = str(float(data['time']) + 2)
         cursor = db.cursor()
         sql = "insert into Danmuku.danmuku (username, item, time) values (%s, '%s', %s);" \
         % (username, item, videoTime)
-        logFile.write(sql)
-        logFile.flush()
+        db.ping(reconnect=True)
         cursor.execute(sql) 
         db.commit()   
     response: Response = Response('')
     response.access_control_allow_origin='*'
     return response
 
-
-
 if __name__ == '__main__':
     db = connectMysql()
-    
-    getDanmuku(0)
     parser = argparse.ArgumentParser()
     parser.add_argument("--filename", type=str, required=True)
     parser.add_argument("-a", "--a", type=float, required=True)

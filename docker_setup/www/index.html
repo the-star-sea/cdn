@@ -55,6 +55,7 @@ var screenHeight = 400; -->
 		.input_area {
 			border: 0;
 			color: rgb(184, 219, 230);
+			font-size: medium;
 			border-radius: 5px;
 			background-color: rgba(241, 241, 241, 0.1);
 			width: 780px;
@@ -192,7 +193,7 @@ var screenHeight = 400; -->
 					receive(res);       // get response message
 				}
 			}
-			console.log(res);
+			//console.log(res);
 			// return JSON.parse(res);
 		}
 
@@ -201,7 +202,7 @@ var screenHeight = 400; -->
 			if (ds.length === 0) {
 				return;
 			}
-			console.log(ds);
+			//console.log(ds);
 			for (let i in ds) {
 				setTimeout(addInterval(createDanmaku(ds[i].item)), 500 * (i + 1));
 			}
