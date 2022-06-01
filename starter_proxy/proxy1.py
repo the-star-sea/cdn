@@ -96,7 +96,7 @@ def calculate_throughput():
 
 def connectMysql():
     try:
-        db = pymysql.connect(host='101.34.204.124',
+        db = pymysql.connect(host='127.0.0.1',
                      user='user',
                      password='123456',
                      database='Danmuku')
@@ -144,6 +144,45 @@ def post():
     response: Response = Response('')
     response.access_control_allow_origin='*'
     return response
+
+@app.route('/comment', methods=['POST'])
+def comment():
+    if request.method == 'POST':
+        data = json.loads(request.get_data(as_text=True))  
+        username =  data['username']
+        item = data['item']
+        videoTime = str(float(data['time']) + 2)
+        cursor = db.cursor()
+        sql = "insert into Danmuku.comment (username, item, time) values (%s, '%s', %s);" \
+        % (username, item, videoTime)
+        db.ping(reconnect=True)
+        cursor.execute(sql) 
+        db.commit()
+    response: Response = Response('')
+    response.access_control_allow_origin='*'
+    return response
+
+@app.route('/getComment/<commentRefresh>')
+def getComment(commentRefresh):
+    print("getComment" + commentRefresh)
+    db.ping(reconnect=True)
+    cursor = db.cursor()
+    sql = "select * from Danmuku.comment;" 
+    print(sql)
+    cursor.execute(sql)
+    # db.commit()  
+    results = cursor.fetchall()
+
+    json_list = []
+    for res in results:
+        result_json = {"id": res[0],"username": res[1],"item": res[2],"time": res[3]}
+        json_list.append(result_json)
+    msg = json.dumps(json_list)
+    # print("result:",results )
+    response: Response = Response(msg)
+    response.access_control_allow_origin='*'
+    return response
+
 
 if __name__ == '__main__':
     db = connectMysql()

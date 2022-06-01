@@ -15,27 +15,47 @@ var screenHeight = 400; -->
 <body background="https://img2.baidu.com/it/u=2106554023,1551546689&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800" style="background-repeat:no-repeat;
                background-attachment:fixed;
                background-size:100% 100%; ">
-	<div style="position: relative; top: 20px;">
-		<div class="screen_container" id="contents " style="margin: auto;">
-			<div id="strobeMediaPlayback" style="height: 100%; width: 100%;">
-				<p>Alternative content</p>
+	<div>
+		<div style="float: left;padding-left: 150px;">
+			<div style="position: relative; top: 20px;">
+				<div class="screen_container" id="contents " style="margin: auto;width: 600; height: 300">
+					<div id="strobeMediaPlayback">
+						<p>Alternative content</p>
+					</div>
+				</div>
+			</div>
+
+			<div style="position: relative;top: 20px; ">
+				<div class="input_box ">
+					<textarea class="input_area" placeholder="Danmaku"
+						type="text background-color:rgba(255,0,255,0.5);"></textarea>
+					<button class="send1">S E N D</button>
+				</div>
+			</div>
+		</div>
+		<div style="float: left; padding-left: 20px;top : 40px;">
+			<div id="comment_area" style="position: relative; top: 5px;">
+				<textarea id="text" readonly>
+				</textarea>
+			</div>
+			<div style="position: relative; ">
+				<div class="comment_box " style="top: 20px;">
+					<textarea class="comment_input" placeholder="comment"
+						type="text background-color:rgba(255,0,255,0.5); top: 20px;"></textarea>
+					<button class="send2" id="s2">S E N D</button>
+					<button class="send2" id="refresh">refresh</button>
+				</div>
 			</div>
 		</div>
 	</div>
 
-	<div style="position: relative;top: 20px; ">
-		<div class="input_box ">
-			<textarea class="input_area" placeholder="Danmaku"
-				type="text background-color:rgba(255,0,255,0.5);"></textarea>
-			<button class="send">S E N D</button>
-		</div>
-	</div>
+
 	<style>
 		.screen_container {
 			border-radius: 5px;
 			position: relative;
-			width: 800px;
-			height: 400px;
+			width: 600px;
+			height: 300px;
 			background: rgba(0, 0, 0, 0.2);
 			;
 			margin: 0px auto;
@@ -46,7 +66,7 @@ var screenHeight = 400; -->
 			border-radius: 5px;
 			top: 20px;
 			position: relative;
-			width: 800px;
+			width: 600px;
 			height: 100px;
 			margin: 0px auto;
 			text-align: center;
@@ -58,25 +78,111 @@ var screenHeight = 400; -->
 			font-size: medium;
 			border-radius: 5px;
 			background-color: rgba(241, 241, 241, 0.1);
-			width: 780px;
+			width: 580px;
 			height: 70px;
 			padding: 10px;
 			resize: none;
 			overflow: hidden;
 		}
 
-		.send {
+		.comment_box {
+			border-radius: 5px;
+			top: 20px;
+			position: relative;
+			width: 350px;
+			height: 100px;
+			margin: 0px auto;
+			text-align: center;
+		}
+
+		.comment_input {
+			border: 0;
+			color: rgb(184, 219, 230);
+			font-size: medium;
+			border-radius: 5px;
+			background-color: rgba(241, 241, 241, 0.1);
+			width: 330px;
+			height: 70px;
+			padding: 10px;
+			resize: none;
+			overflow: hidden;
+		}
+
+		#comment_area {
+			border: 0;
+			color: rgb(184, 219, 230);
+			font-size: medium;
+			border-radius: 5px;
+
+			width: 350px;
+			height: 300px;
+			resize: none;
+		}
+
+		#text {
+			border: 0;
+			color: rgb(184, 219, 230);
+			font-size: medium;
+			border-radius: 5px;
+			background-color: rgba(241, 241, 241, 0.2);
+			width: 350px;
+			height: 300px;
+			resize: none;
+			overflow: hidden;
+		}
+
+		.send1 {
 			border: 0;
 			border-radius: 5px;
 			font-size: large;
 			color: rgb(184, 219, 230);
 			position: relative;
-			width: 400px;
+			width: 300px;
 			height: 35px;
 			background-color: rgba(209, 80, 136, 0.3);
 			margin: 0px auto;
 			resize: none;
+		}
 
+		.send1:active {
+			border: 0;
+			border-radius: 5px;
+			font-size: large;
+			color: rgb(184, 219, 230);
+			position: relative;
+			width: 300px;
+			height: 35px;
+			background-color: rgba(209, 80, 136, 0.3);
+			margin: 0px auto;
+			resize: none;
+			opacity: 0.5;
+		}
+
+		.send2 {
+			border: 0;
+			border-radius: 5px;
+			font-size: large;
+			color: rgb(184, 219, 230);
+			position: relative;
+			width: 150px;
+			height: 35px;
+			background-color: rgba(209, 80, 136, 0.3);
+			margin: 0px auto;
+			resize: none;
+		}
+
+		.send2:active {
+			border: 0;
+			border-radius: 5px;
+			font-size: large;
+			color: rgb(184, 219, 230);
+			position: relative;
+			width: 150px;
+			height: 35px;
+			background-color: rgba(209, 80, 136, 0.3);
+			margin: 0px auto;
+			resize: none;
+			opacity: 0.5;
 		}
 	</style>
 
@@ -85,6 +191,7 @@ var screenHeight = 400; -->
 	<script>
 		var loc = window.location.host
 		var user = guid();
+		var commentRefresh = 0;
 		// Create a StrobeMediaPlayback configuration
 		var parameters =
 		{
@@ -98,8 +205,8 @@ var screenHeight = 400; -->
 		swfobject.embedSWF
 			("StrobeMediaPlayback.swf"
 				, "strobeMediaPlayback"
-				, 800
-				, 400
+				, 600
+				, 300
 				, "10.1.0"
 				, {}
 				, parameters
@@ -114,7 +221,9 @@ var screenHeight = 400; -->
 		function onDurationChange(time, playerId) {
 			document.getElementById("duration").innerHTML = time;
 		}
+
 		var player = null;
+
 		function onJavaScriptBridgeCreated(playerId) {
 			if (player == null) {
 				player = document.getElementById(playerId);
@@ -128,15 +237,14 @@ var screenHeight = 400; -->
 					var state = player.getState();
 					if (state == "ready" || state == "paused") {
 						player.play2();
+					} else if (state == "playing") {
+						player.pause();
 					}
-					else
-						if (state == "playing") {
-							player.pause();
-						}
 					return false;
 				};
 			}
 		}
+
 		const timers = [];
 		const jqueryDom = createDanmaku('hihihi'); // test danmaku, delete it as you like
 		addInterval(jqueryDom);// test danmaku, delete it as you like
@@ -145,6 +253,7 @@ var screenHeight = 400; -->
 		setInterval("getNewDan(currentTime);", 1000); // Send a query to the server every 800ms to get new danmaku
 		setInterval("updateCurrentTime();", 100);
 		var currentTime = 0;
+
 		function getVideoTime() {
 			var videoPlayer = document.getElementById("strobeMediaPlayback");
 			var res = videoPlayer.getCurrentTime();
@@ -155,8 +264,45 @@ var screenHeight = 400; -->
 			currentTime = getVideoTime();
 		}
 
+		$("#s2").on("click", function () {
+			// TODO: send danmaku to server
+			var input_element = document.getElementsByClassName('comment_input');
+			var commentItem = input_element[0].value;   // get the item from the input field
+			console.log(commentItem);
+			input_element.value = "";
+			var videoTime = getVideoTime();
+			json_data = {
+				username: user,
+				item: commentItem,
+				time: videoTime,
+			};
+			msg_json = JSON.stringify(json_data);
+			const httpRequest = new XMLHttpRequest();       // construct a http post request
+			httpRequest.withCredentials = false;
+			httpRequest.open("post", "http://127.0.0.1:8999/comment");
+			httpRequest.setRequestHeader("Content-Type", "text/plain");     // set the Content-Type to meet the cross-domain requirements
+			httpRequest.send(msg_json);     // send danmakus with timestamp
+		});
 
-		$(".send").on("click", function () {
+		$("#refresh").on("click", function () {
+			console.log("commm");
+			const httpRequest = new XMLHttpRequest();       // construct a http get request with index
+			httpRequest.withCredentials = false;
+			httpRequest.open("get", "http://127.0.0.1:8999/getComment/" + commentRefresh, true);
+			httpRequest.setRequestHeader("Content-Type", "text/plain");     // set the Content-Type to meet the cross-domain requirements
+			httpRequest.send();
+			let res = "";
+			httpRequest.onreadystatechange = function () {
+				if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+					res = httpRequest.responseText;
+					receiveComment(res);       // get response message
+				}
+			}
+			commentRefresh++;
+		});
+
+
+		$(".send1").on("click", function () {
 			// TODO: send danmaku to server
 			var input_element = document.getElementsByClassName('input_area');
 			var danmakuItem = input_element[0].value;   // get the item from the input field
@@ -208,12 +354,26 @@ var screenHeight = 400; -->
 			}
 		}
 
+		function receiveComment(res) {
+			let ds = JSON.parse(res);
+			if (ds.length === 0) {
+				return;
+			}
+			var ta = document.getElementById("text");
+			ta.value = "";
+			var temText = "";
+			for (let i in ds) {
+				temText = temText + ds[i].item + "\n";
+			}
+			ta.value = temText;
+		}
+
 		// create a Dom object corresponding to a danmaku
 		function createDanmaku(text) {
 			const jqueryDom = $("<div class='bullet'>" + text + "</div>");
 			const fontColor = "rgb(255,0,255)";
 			const fontSize = "20px";
-			let top = Math.floor(Math.random() * 400) + "px";
+			let top = Math.floor(Math.random() * $(".screen_container").height()) + "px";
 			const left = $(".screen_container").width() + "px";
 			jqueryDom.css({
 				"position": 'absolute',
@@ -250,4 +410,5 @@ var screenHeight = 400; -->
 		}
 	</script>
 </body>
+
 </html>
