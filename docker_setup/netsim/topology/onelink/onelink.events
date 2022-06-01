@@ -25,6 +25,7 @@
 # 5 link_1 500 
 # 5 link_1 250
 
+
 # continue with your own test scenarios...
 0 link_1 1000 # start link BW at 1 mbps
 20 link_1 500 # after 20 seconds, decrease to 500 kbps

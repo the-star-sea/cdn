@@ -23,12 +23,12 @@
 20 link_2 500
 20 link_1 250 # starting at 40 seconds, alternate b/w 250 and 500
 20 link_2 250
-10 link_1 1000 # starting at 40 seconds, alternate b/w 250 and 500
-10 link_2 1000 
+15 link_1 1000 # starting at 40 seconds, alternate b/w 250 and 500
+15 link_2 1000 
 10 link_1 250 
 10 link_2 250
-10 link_1 500 
-10 link_2 500
+15 link_1 1000 
+15 link_2 1000
 10 link_1 250
 10 link_2 250
 

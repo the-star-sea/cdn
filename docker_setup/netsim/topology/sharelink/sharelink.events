@@ -26,10 +26,10 @@
 # 5 link_1 25
 
 # continue with your own test scenarios...
-0 link_1 500 # start link BW at 1 mbps
-20 link_1 100 # after 20 seconds, decrease to 500 kbps
+0 link_1 1000 # start link BW at 1 mbps
+20 link_1 500 # after 20 seconds, decrease to 500 kbps
 20 link_1 250 # starting at 40 seconds, alternate b/w 250 and 500
 15 link_1 1000 # starting at 40 seconds, alternate b/w 250 and 500
 10 link_1 250 
-10 link_1 500 
-10 link_1 250
+15 link_1 1000 
+10 link_1 500
