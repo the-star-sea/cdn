@@ -31,4 +31,4 @@ For sharelink,we can see that the jain fairness grows up and down between 0.5 an
 ![twolink](./images/twolink0.9.png)
 The change and frequency  of the derivative of BR and link utilization of twolink are larger than onelink.
 
-The change and frequency  of the derivative of BR and link utilization of onelink are larger than sharelink.
+The change and frequency  of the derivative of BR  of sharelink are larger than twolink.
