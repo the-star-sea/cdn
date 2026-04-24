@@ -1,34 +1,26 @@
-# Report
-|Member|SID|Contribute|
-|---|---|---|
-|丛哲渊|11912106|1|
-|张通|11911611|1|
-|张坤龙|11911716|1|
+# Content Delivery Network (CDN) Simulator & Implementation
 
-## Proxy
+## Overview
+A robust project demonstrating the core principles of a Content Delivery Network (CDN). It includes HTTP proxying, dynamic DNS routing based on load/proximity, and network simulation environments.
 
-### Onelink 
+## Architecture
+- **DNS Server** (`dns/`): Custom DNS implementation to route clients to the optimal edge server.
+- **HTTP Proxy** (`starter_proxy/`): Caching proxy servers handling client video/web requests.
+- **Simulation Environment** (`netsim/`): Tools to emulate network topologies, latency, and bandwidth constraints using Mininet/Click.
+- **Docker Setup**: Infrastructure configurations for deploying the CDN nodes.
 
-#### alpha = 0.1
+## Setup & Usage
+1. Configure your network topologies in `netsim/`.
+2. Start the proxy nodes using the Python scripts in `starter_proxy/` (e.g., `proxy1.py`).
+3. Launch the DNS server to begin intelligently routing traffic.
 
-![onelink0.1](./images/onelink0.1.png)
+*(Note: Requires a Linux environment capable of running Mininet/Docker for full topology simulation).*
 
-#### alpha = 0.5
+## Highlights
+- Implements active load balancing and geographic routing logic.
+- Adaptive Bitrate (ABR) video streaming support.
+- Extensive logging and graphing tools (`grapher.py`) for performance analysis (utilization, fairness, smoothness).
 
-![onelink0.5](./images/onelink0.5.png)
-
-#### alpha = 0.9
-
-![onelink0.9](./images/onelink0.9.png)
-As we can see clearly,the bigger alpha is,the bigger the change and frequency  of the derivative of BR is.
-The bigger alpha is,the more frequent the link of utilization change.
-### sharelink alpha = 0.9
-
-![sharelink](./images/sharelink0.9.png)
-For sharelink,we can see that the jain fairness grows up and down between 0.5 and 1. 1 means absolute fairness and when bandwith changes ,the fairness goes down to 1.And when bandwith does not change ,the TCP will make the fairness increase and stable at 1.
-### twolink alpha = 0.9
-
-![twolink](./images/twolink0.9.png)
-The change and frequency  of the derivative of BR and link utilization of twolink are larger than onelink.
-
-The change and frequency  of the derivative of BR  of sharelink are larger than twolink.
+## Limitations
+- Primarily designed as an academic/simulation project rather than a production-ready global CDN.
+- Docker and Mininet setups require specific host environments and privileges.
